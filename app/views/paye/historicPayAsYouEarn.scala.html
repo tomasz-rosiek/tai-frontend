@@ -134,13 +134,14 @@ messages: Messages, templateRenderer: uk.gov.hmrc.renderer.TemplateRenderer, par
                 <div id="@incomeType@idx" class="subsection flush--top @if(pair.length==1){column-full}else{column-one-half}">
                     <h3 class="heading-large flush break-word-only">@employment.name</h3>
                     <p class="flush--top">
+                        <span class="visuallyhidden">Messages("tai.incomeTaxSummary.incomeToDate")</span>
                         <span class="heading-36 faded-text-dark">@withPoundPrefix(MoneyPounds(employment.taxablePayYTD))</span>
                     </p>
 
                     @Link.toInternalPage(
-                    url=routes.YourTaxCodeController.prevTaxCodes(viewModel.taxYear).toString(),
-                    value=Some(Messages("tai.taxCode.description.link")),
-                    id=Some("taxCodeDescription")
+                        url=routes.YourTaxCodeController.prevTaxCodes(viewModel.taxYear).toString(),
+                        value=Some(Messages("tai.taxCode.description.link")),
+                        id=Some("taxCodeDescription")
                     ).toHtml
 
                     <p>
