@@ -25,14 +25,17 @@ sealed trait BasisOperation
 case object Week1Month1BasisOperation extends BasisOperation
 case object OtherBasisOperation extends BasisOperation
 
-object BasisOperation{
+object BasisOperation {
   implicit val formatBasisOperation = new Format[BasisOperation] {
-    override def reads(json: JsValue): JsSuccess[BasisOperation] = json.as[String] match {
-      case "Week1Month1BasisOperation" => JsSuccess(Week1Month1BasisOperation)
-      case "Week 1 Month 1" => JsSuccess(Week1Month1BasisOperation)
-      case "OtherBasisOperation" => JsSuccess(OtherBasisOperation)
-      case "Cumulative" => JsSuccess(OtherBasisOperation)
-      case _ => throw new IllegalArgumentException("Invalid adjustment type")
+    override def reads(json: JsValue): JsSuccess[BasisOperation] = {
+      val week1Month1Variations = List("Week1Month1BasisOperation", "Week 1 Month 1", "Week1/Month1")
+      val otherBasisOperationVariations = List("OtherBasisOperation", "Cumulative")
+
+      json.as[String] match {
+        case operationCode if week1Month1Variations.contains(operationCode) => JsSuccess(Week1Month1BasisOperation)
+        case operationCode if otherBasisOperationVariations.contains(operationCode) => JsSuccess(OtherBasisOperation)
+        case _ => throw new IllegalArgumentException("Invalid adjustment type")
+      }
     }
 
     override def writes(adjustmentType: BasisOperation) = JsString(adjustmentType.toString)
