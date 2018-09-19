@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.tai.util
 
+import play.api.libs.json._
+
 trait JourneyCacheConstants {
 
   val AddEmployment_JourneyKey = "add-employment"
@@ -325,4 +327,28 @@ object TaiConstants {
   val CurrentTaxYearPlusOne = "currentTaxYearPlusOne"
 
   val HigherRateBandIncome = 150000
+
+  val TaxCodeChangeTypeAdded = "ADDED"
+  val TaxCodeChangeTypeRemoved = "REMOVED"
+  val TaxCodeChangeTypeAdjusted = "ADJUSTED"
+}
+
+
+// TODO: MOVE SEAN ARMSTRONG
+sealed trait TaxCodeChangeReasonType
+case object TaxCodeChangeReasonTypeAdded extends TaxCodeChangeReasonType
+case object TaxCodeChangeReasonTypeRemoved extends TaxCodeChangeReasonType
+case object TaxCodeChangeReasonTypeAdjusted extends TaxCodeChangeReasonType
+
+object TaxCodeChangeReasonType extends TaxCodeChangeReasonType {
+
+  implicit val format = new Format[TaxCodeChangeReasonType] {
+    override def reads(json: JsValue): JsSuccess[TaxCodeChangeReasonType] = json.as[String] match {
+      case "ADDED" => JsSuccess(TaxCodeChangeReasonTypeAdded)
+      case "REMOVED" => JsSuccess(TaxCodeChangeReasonTypeRemoved)
+      case "ADJUSTED" => JsSuccess(TaxCodeChangeReasonTypeAdjusted)
+    }
+
+    override def writes(taxCodeChangeReasonsType: TaxCodeChangeReasonType) = JsString(taxCodeChangeReasonsType.toString)
+  }
 }

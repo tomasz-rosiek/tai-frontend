@@ -21,7 +21,7 @@ import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tai.connectors.EmploymentsConnector.baseUrl
 import uk.gov.hmrc.tai.connectors.responses.{TaiResponse, TaiSuccessResponseWithPayload, TaiTaxAccountFailureResponse}
-import uk.gov.hmrc.tai.model.domain.TaxCodeChange
+import uk.gov.hmrc.tai.model.domain.{TaxCodeChange, TaxCodeChangeReasons}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -55,9 +55,19 @@ trait TaxCodeChangeConnector {
         Logger.warn(s"Couldn't retrieve tax code changed for $nino with exception:${e.getMessage}")
         TaiTaxAccountFailureResponse(e.getMessage)
     }
- }
+  }
 
+  def taxCodeChangeReasonsUrl(nino: String): String = s"$serviceUrl/tai/$nino/tax-account/tax-code-change/reasons"
 
+  def taxCodeChangeReasons(nino: Nino)(implicit hc: HeaderCarrier): Future[TaiResponse] = {
+    httpHandler.getFromApi(taxCodeChangeReasonsUrl(nino.nino)) map (
+        json => TaiSuccessResponseWithPayload((json \ "data").as[TaxCodeChangeReasons])
+      ) recover {
+      case e: Exception =>
+        Logger.warn(s"Couldn't retrieve tax code changed for $nino with exception:${e.getMessage}")
+        TaiTaxAccountFailureResponse(e.getMessage)
+    }
+  }
 }
 
 object TaxCodeChangeConnector extends TaxCodeChangeConnector{
