@@ -60,11 +60,13 @@ trait TaxCodeChangeController extends TaiBaseController
             ServiceCheckLite.personDetailsCheck {
               val nino: Nino = Nino(user.getNino)
 
+              // TODO: Move TaxCodeChangeReasons into one taxCodeChangeService call
               for {
                 taxCodeChange <- taxCodeChangeService.taxCodeChange(nino)
+                taxCodeChangeReasons <- taxCodeChangeService.taxCodeChangeReasons(nino)
                 scottishTaxRateBands <- taxAccountService.scottishBandRates(nino, TaxYear(), taxCodeChange.uniqueTaxCodes)
               } yield {
-                val viewModel = TaxCodeChangeViewModel(taxCodeChange, scottishTaxRateBands)
+                val viewModel = TaxCodeChangeViewModel(taxCodeChange,taxCodeChangeReasons, scottishTaxRateBands)
                 Ok(views.html.taxCodeChange.taxCodeComparison(viewModel))
               }
             }

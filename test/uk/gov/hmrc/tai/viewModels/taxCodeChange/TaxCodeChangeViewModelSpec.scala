@@ -21,6 +21,7 @@ import org.scalatestplus.play.PlaySpec
 import play.api.i18n.Messages
 import uk.gov.hmrc.tai.model.domain._
 import uk.gov.hmrc.tai.model.domain.income.{OtherBasisOperation, Week1Month1BasisOperation}
+import uk.gov.hmrc.tai.util.factory.TaxCodeChangeReasonsFactory
 import uk.gov.hmrc.tai.viewModels.DescriptionListViewModel
 import uk.gov.hmrc.time.TaxYearResolver
 
@@ -43,10 +44,11 @@ class TaxCodeChangeViewModelSpec extends PlaySpec with FakeTaiPlayApplication {
     Seq(previousTaxCodeRecord1, primaryFullYearTaxCode),
     Seq(currentTaxCodeRecord1, primaryFullYearTaxCode)
   )
+  val taxCodeReasons = TaxCodeChangeReasonsFactory.create
 
   "TaxCodeChangeViewModel apply method" must {
     "translate the taxCodeChange object into a TaxCodePairs" in {
-      val model = TaxCodeChangeViewModel(taxCodeChange, Map[String, BigDecimal]())
+      val model = TaxCodeChangeViewModel(taxCodeChange, taxCodeReasons, Map[String, BigDecimal]())
 
       model.pairs mustEqual TaxCodePairs(Seq(
         TaxCodePair(Some(primaryFullYearTaxCode), Some(primaryFullYearTaxCode)),
@@ -55,9 +57,18 @@ class TaxCodeChangeViewModelSpec extends PlaySpec with FakeTaiPlayApplication {
     }
 
     "sets the changeDate to the mostRecentTaxCodeChangeDate" in {
-      val model = TaxCodeChangeViewModel(taxCodeChange, Map[String, BigDecimal]())
+      val model = TaxCodeChangeViewModel(taxCodeChange, taxCodeReasons, Map[String, BigDecimal]())
 
       model.changeDate mustEqual currentTaxCodeRecord1.startDate
+    }
+
+    "translates the TaxCodeChangeReasons into human readable messages" in {
+      val model = TaxCodeChangeViewModel(taxCodeChange, taxCodeReasons, Map[String, BigDecimal]())
+
+      model.reasons mustEqual Seq(
+        "Message1",
+        "Message2"
+      )
     }
   }
 

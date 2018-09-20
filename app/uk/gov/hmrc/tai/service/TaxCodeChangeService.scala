@@ -22,8 +22,8 @@ import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.partials.HeaderCarrierForPartials
 import uk.gov.hmrc.tai.connectors.TaxCodeChangeConnector
-import uk.gov.hmrc.tai.connectors.responses.{TaiResponse, TaiSuccessResponseWithPayload}
-import uk.gov.hmrc.tai.model.domain.TaxCodeChange
+import uk.gov.hmrc.tai.connectors.responses.{TaiResponse, TaiSuccessResponseWithPayload, TaiTaxAccountFailureResponse}
+import uk.gov.hmrc.tai.model.domain.{TaxCodeChange, TaxCodeChangeReasons}
 
 import scala.concurrent.Future
 
@@ -44,9 +44,9 @@ trait TaxCodeChangeService {
     }
   }
 
-  def taxCodeChangeReasons(nino: Nino)(implicit hc: HeaderCarrier): Future[Boolean] = {
-    taxCodeChangeConnector.hasTaxCodeChanged(nino) map {
-      case TaiSuccessResponseWithPayload(hasTaxCodeChanged: Boolean) => hasTaxCodeChanged
+  def taxCodeChangeReasons(nino: Nino)(implicit hc: HeaderCarrier): Future[TaxCodeChangeReasons] = {
+    taxCodeChangeConnector.taxCodeChangeReasons(nino) map {
+      case TaiSuccessResponseWithPayload(taxCodeChangeReasons: TaxCodeChangeReasons) => taxCodeChangeReasons
       case _ => throw new RuntimeException("Could not fetch tax code change reasons")
     }
   }

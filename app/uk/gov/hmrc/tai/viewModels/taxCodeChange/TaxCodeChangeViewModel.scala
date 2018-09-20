@@ -19,18 +19,24 @@ package uk.gov.hmrc.tai.viewModels.taxCodeChange
 import org.joda.time.LocalDate
 import play.api.i18n.Messages
 import uk.gov.hmrc.tai.model.domain.income.{BasisOperation, Week1Month1BasisOperation}
-import uk.gov.hmrc.tai.model.domain.{TaxCodeChange, TaxCodeRecord}
+import uk.gov.hmrc.tai.model.domain.{TaxCodeChange, TaxCodeChangeReasons, TaxCodeRecord}
 import uk.gov.hmrc.tai.util.TaiConstants
 import uk.gov.hmrc.tai.viewModels.{DescriptionListViewModel, TaxCodeDescriptor}
 
-case class TaxCodeChangeViewModel(pairs: TaxCodePairs, changeDate: LocalDate, scottishTaxRateBands: Map[String, BigDecimal])
+case class TaxCodeChangeViewModel(pairs: TaxCodePairs, changeDate: LocalDate, reasons: Seq[String], scottishTaxRateBands: Map[String, BigDecimal])
 
 object TaxCodeChangeViewModel extends TaxCodeDescriptor {
-  def apply(taxCodeChange: TaxCodeChange, scottishTaxRateBands: Map[String, BigDecimal])(implicit messages: Messages): TaxCodeChangeViewModel = {
+  def apply(taxCodeChange: TaxCodeChange, taxCodeChangeReasons: TaxCodeChangeReasons, scottishTaxRateBands: Map[String, BigDecimal])
+           (implicit messages: Messages): TaxCodeChangeViewModel = {
     val taxCodePairs = TaxCodePairs(taxCodeChange.previous, taxCodeChange.current)
     val changeDate = taxCodeChange.mostRecentTaxCodeChangeDate
+    val reasons = translateTaxCodeChangeReasons(taxCodeChangeReasons)
 
-    TaxCodeChangeViewModel(taxCodePairs, changeDate, scottishTaxRateBands)
+    TaxCodeChangeViewModel(taxCodePairs, changeDate, reasons, scottishTaxRateBands)
+  }
+
+  def translateTaxCodeChangeReasons(taxCodeReasons:TaxCodeChangeReasons): Seq[String] = {
+    Seq.empty
   }
 
   def getTaxCodeExplanations(taxCodeRecord: TaxCodeRecord, scottishTaxRateBands: Map[String, BigDecimal], identifier: String)

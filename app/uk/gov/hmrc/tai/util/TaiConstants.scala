@@ -327,10 +327,6 @@ object TaiConstants {
   val CurrentTaxYearPlusOne = "currentTaxYearPlusOne"
 
   val HigherRateBandIncome = 150000
-
-  val TaxCodeChangeTypeAdded = "ADDED"
-  val TaxCodeChangeTypeRemoved = "REMOVED"
-  val TaxCodeChangeTypeAdjusted = "ADJUSTED"
 }
 
 

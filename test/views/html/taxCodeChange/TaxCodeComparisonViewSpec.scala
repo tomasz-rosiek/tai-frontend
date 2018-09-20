@@ -22,6 +22,7 @@ import play.api.i18n.Messages
 import uk.gov.hmrc.play.language.LanguageUtils.Dates
 import uk.gov.hmrc.tai.model.domain.income.OtherBasisOperation
 import uk.gov.hmrc.tai.model.domain.{TaxCodeChange, TaxCodeRecord}
+import uk.gov.hmrc.tai.util.factory.TaxCodeChangeReasonsFactory
 import uk.gov.hmrc.tai.util.viewHelpers.TaiViewSpec
 import uk.gov.hmrc.tai.viewModels.taxCodeChange.TaxCodeChangeViewModel
 import uk.gov.hmrc.time.TaxYearResolver
@@ -33,7 +34,8 @@ class TaxCodeComparisonViewSpec extends TaiViewSpec {
   val taxCodeRecord2 = taxCodeRecord1.copy(startDate = startDate.plusMonths(1).plusDays(1), endDate = TaxYearResolver.endOfCurrentTaxYear, payrollNumber = None)
   val taxCodeRecord3 = taxCodeRecord1.copy(taxCode = "BR", startDate = startDate.plusDays(3), endDate = TaxYearResolver.endOfCurrentTaxYear, pensionIndicator = false, payrollNumber = Some("Payroll Number"))
   val taxCodeChange: TaxCodeChange = TaxCodeChange(Seq(taxCodeRecord1, taxCodeRecord3), Seq(taxCodeRecord2, taxCodeRecord3))
-  val viewModel: TaxCodeChangeViewModel = TaxCodeChangeViewModel(taxCodeChange, Map[String, BigDecimal]())
+  val taxCodeReasons = TaxCodeChangeReasonsFactory.create
+  val viewModel: TaxCodeChangeViewModel = TaxCodeChangeViewModel(taxCodeChange, taxCodeReasons, Map[String, BigDecimal]())
 
   override def view = views.html.taxCodeChange.taxCodeComparison(viewModel)
 

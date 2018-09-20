@@ -23,9 +23,10 @@ import org.scalatestplus.play.PlaySpec
 import uk.gov.hmrc.domain.{Generator, Nino}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tai.connectors.TaxCodeChangeConnector
-import uk.gov.hmrc.tai.connectors.responses.TaiSuccessResponseWithPayload
+import uk.gov.hmrc.tai.connectors.responses.{TaiSuccessResponseWithPayload, TaiTaxAccountFailureResponse}
 import uk.gov.hmrc.tai.model.domain.income.OtherBasisOperation
 import uk.gov.hmrc.tai.model.domain.{TaxCodeChange, TaxCodeRecord}
+import uk.gov.hmrc.tai.util.factory.TaxCodeChangeReasonsFactory
 import uk.gov.hmrc.time.TaxYearResolver
 
 import scala.concurrent.duration._
@@ -36,26 +37,53 @@ class TaxCodeChangeServiceSpec extends PlaySpec with MockitoSugar{
 
   "taxCodeChange" must {
     "return the tax code change given a valid nino" in {
-      val sut = createSut
+      val taxCodeChangeServiceMock = createTaxCodeChangeServiceMock
       val nino = generateNino
 
       val taxCodeChange = TaxCodeChange(Seq(taxCodeRecord1), Seq(taxCodeRecord2))
 
-      when(sut.taxCodeChangeConnector.taxCodeChange(any())(any())).thenReturn(Future.successful(TaiSuccessResponseWithPayload(taxCodeChange)))
+      when(taxCodeChangeServiceMock.taxCodeChangeConnector.taxCodeChange(any())(any())).thenReturn(Future.successful(TaiSuccessResponseWithPayload(taxCodeChange)))
 
-      val result = sut.taxCodeChange(nino)
+      val result = taxCodeChangeServiceMock.taxCodeChange(nino)
       Await.result(result, 5.seconds) mustBe taxCodeChange
     }
   }
 
   "has tax code changed" must {
     "return true if there has been a tax code change" in {
-
-      val sut = createSut
+      val taxCodeChangeServiceMock = createTaxCodeChangeServiceMock
       val nino = generateNino
-      when(sut.taxCodeChangeConnector.hasTaxCodeChanged(any())(any())).thenReturn(Future.successful(TaiSuccessResponseWithPayload(true)))
-      val result = sut.hasTaxCodeChanged(nino)
+      when(taxCodeChangeServiceMock.taxCodeChangeConnector.hasTaxCodeChanged(any())(any())).thenReturn(Future.successful(TaiSuccessResponseWithPayload(true)))
+      val result = taxCodeChangeServiceMock.hasTaxCodeChanged(nino)
       Await.result(result, 5.seconds) mustBe true
+    }
+  }
+
+  "tax code change reasons" must {
+    "return tax code change reason" when {
+      "a valid object is returned" in {
+        val taxCodeChangeServiceMock = createTaxCodeChangeServiceMock
+        val nino = generateNino
+
+        val taxCodeChangeReasons = TaxCodeChangeReasonsFactory.create
+
+        when(taxCodeChangeServiceMock.taxCodeChangeConnector.taxCodeChangeReasons(any())(any())).thenReturn(Future.successful(TaiSuccessResponseWithPayload(taxCodeChangeReasons)))
+
+        val result = taxCodeChangeServiceMock.taxCodeChangeReasons(nino)
+        Await.result(result, 5.seconds) mustBe taxCodeChangeReasons
+      }
+    }
+    "return a Runtime exception" when {
+      "no valid object is returned" in {
+        val taxCodeChangeServiceMock = createTaxCodeChangeServiceMock
+        val nino = generateNino
+        val failure = TaiTaxAccountFailureResponse("")
+
+        when(taxCodeChangeServiceMock.taxCodeChangeConnector.taxCodeChangeReasons(any())(any())).thenReturn(Future.successful(failure))
+
+        val exception = the[RuntimeException] thrownBy Await.result(taxCodeChangeServiceMock.taxCodeChangeReasons(nino), 5.seconds)
+        exception.getMessage mustBe "Could not fetch tax code change reasons"
+      }
     }
   }
 
@@ -65,9 +93,9 @@ class TaxCodeChangeServiceSpec extends PlaySpec with MockitoSugar{
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
   private def generateNino: Nino = new Generator(new Random).nextNino
-  private def createSut = new SUT
+  private def createTaxCodeChangeServiceMock = new TaxCodeChangeServiceMock
 
-  private class SUT extends TaxCodeChangeService {
+  private class TaxCodeChangeServiceMock extends TaxCodeChangeService {
     override val taxCodeChangeConnector: TaxCodeChangeConnector = mock[TaxCodeChangeConnector]
   }
 

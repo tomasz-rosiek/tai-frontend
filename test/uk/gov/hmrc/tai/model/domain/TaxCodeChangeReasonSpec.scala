@@ -30,7 +30,7 @@ class TaxCodeChangeReasonSpec extends PlaySpec {
         val expectedModel = TaxCodeChangeReasonFactory.createNewEmploymentReason
         val json = TaxCodeChangeReasonFactory.createNewEmploymentReasonJson
 
-        (json \ "data").as[TaxCodeChangeReason] mustEqual expectedModel
+        json.as[TaxCodeChangeReason] mustEqual expectedModel
       }
 
       "throw a JsError given an empty data" in {

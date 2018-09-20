@@ -38,6 +38,7 @@ import uk.gov.hmrc.tai.service.benefits.CompanyCarService
 import uk.gov.hmrc.tai.service._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tai.model.domain.income.OtherBasisOperation
+import uk.gov.hmrc.tai.util.factory.TaxCodeChangeReasonsFactory
 import uk.gov.hmrc.time.TaxYearResolver
 
 import scala.concurrent.Future
@@ -115,6 +116,9 @@ class TaxCodeChangeControllerSpec extends PlaySpec
         val SUT = createSUT(true)
 
         val taxCodeChange = TaxCodeChange(Seq(taxCodeRecord1), Seq(taxCodeRecord2))
+        val taxCodeChangeReasons = TaxCodeChangeReasonsFactory.create
+
+        when(SUT.taxCodeChangeService.taxCodeChangeReasons(any())(any())).thenReturn(Future.successful(taxCodeChangeReasons))
         when(SUT.taxCodeChangeService.taxCodeChange(any())(any())).thenReturn(Future.successful(taxCodeChange))
         when(SUT.taxAccountService.scottishBandRates(any(), any(), any())(any())).thenReturn(Future.successful(Map[String, BigDecimal]()))
 

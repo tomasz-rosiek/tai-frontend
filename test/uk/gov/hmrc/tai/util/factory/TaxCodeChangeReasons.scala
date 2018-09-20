@@ -57,7 +57,7 @@ object TaxCodeChangeReasonFactory {
 
   def createNewEmploymentReasonJson: JsObject = {
     Json.obj(
-      "reasonsType" -> TaiConstants.TaxCodeChangeTypeAdded,
+      "reasonsType" -> "ADDED",
       "id" -> "EMPLOYMENT",
       "reason" -> "Some development reasons"
     )
@@ -69,7 +69,7 @@ object TaxCodeChangeReasonFactory {
 
   def createCeasedEmploymentReasonJson: JsObject = {
     Json.obj(
-      "reasonsType" -> TaiConstants.TaxCodeChangeTypeRemoved,
+      "reasonsType" -> "REMOVED",
       "id" -> "EMPLOYMENT",
       "reason" -> "Some development reasons"
     )
