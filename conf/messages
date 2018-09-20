@@ -1289,3 +1289,7 @@ taxCode.change.yourTaxCodeChanged.currentTaxCodes=Current tax codes
 taxCode.change.yourTaxCodeChanged.understand=Understand what {0} means
 taxCode.change.yourTaxCodeChanged.currentTaxCodeDetails.screenReader=From {0} your tax code for {2} is {3}
 taxCode.change.yourTaxCodeChanged.previousTaxCodeDetails.screenReader=From {0} to {1} your tax code for {2} was {3}
+
+taxCode.change.yourTaxCodeChanged.reasons.added.employment=You have a new employment
+taxCode.change.yourTaxCodeChanged.reasons.removed.employment=You have ceased a employment
+taxCode.change.yourTaxCodeChanged.reasons.added.medical=You have a new medical allowance

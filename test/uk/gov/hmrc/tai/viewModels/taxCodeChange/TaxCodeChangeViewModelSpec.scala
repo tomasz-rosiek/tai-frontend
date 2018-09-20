@@ -66,8 +66,8 @@ class TaxCodeChangeViewModelSpec extends PlaySpec with FakeTaiPlayApplication {
       val model = TaxCodeChangeViewModel(taxCodeChange, taxCodeReasons, Map[String, BigDecimal]())
 
       model.reasons mustEqual Seq(
-        "Message1",
-        "Message2"
+        Messages("taxCode.change.yourTaxCodeChanged.reasons.added.employment"),
+        Messages("taxCode.change.yourTaxCodeChanged.reasons.removed.employment")
       )
     }
   }

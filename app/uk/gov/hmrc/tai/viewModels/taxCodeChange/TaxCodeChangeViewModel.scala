@@ -35,8 +35,10 @@ object TaxCodeChangeViewModel extends TaxCodeDescriptor {
     TaxCodeChangeViewModel(taxCodePairs, changeDate, reasons, scottishTaxRateBands)
   }
 
-  def translateTaxCodeChangeReasons(taxCodeReasons:TaxCodeChangeReasons): Seq[String] = {
-    Seq.empty
+  def translateTaxCodeChangeReasons(taxCodeReasons:TaxCodeChangeReasons)(implicit messages: Messages): Seq[String] = {
+    taxCodeReasons.reasons.map(reason => {
+      messages(s"taxCode.change.yourTaxCodeChanged.reasons.${reason.reasonsType.toString.toLowerCase}.${reason.id.toLowerCase}")
+    })
   }
 
   def getTaxCodeExplanations(taxCodeRecord: TaxCodeRecord, scottishTaxRateBands: Map[String, BigDecimal], identifier: String)

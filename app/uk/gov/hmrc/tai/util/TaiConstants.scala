@@ -331,12 +331,23 @@ object TaiConstants {
 
 
 // TODO: MOVE SEAN ARMSTRONG
-sealed trait TaxCodeChangeReasonType
-case object TaxCodeChangeReasonTypeAdded extends TaxCodeChangeReasonType
-case object TaxCodeChangeReasonTypeRemoved extends TaxCodeChangeReasonType
-case object TaxCodeChangeReasonTypeAdjusted extends TaxCodeChangeReasonType
+sealed trait TaxCodeChangeReasonType {
+  def identifier: String
+  override def toString: String = this.identifier
+}
+
+case object TaxCodeChangeReasonTypeAdded extends TaxCodeChangeReasonType {
+  override def identifier: String = "ADDED"
+}
+case object TaxCodeChangeReasonTypeRemoved extends TaxCodeChangeReasonType {
+  override def identifier: String = "REMOVED"
+}
+case object TaxCodeChangeReasonTypeAdjusted extends TaxCodeChangeReasonType {
+  override def identifier: String = "ADJUSTED"
+}
 
 object TaxCodeChangeReasonType extends TaxCodeChangeReasonType {
+  override def identifier: String = ""
 
   implicit val format = new Format[TaxCodeChangeReasonType] {
     override def reads(json: JsValue): JsSuccess[TaxCodeChangeReasonType] = json.as[String] match {
