@@ -26,6 +26,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tai.connectors.responses.{TaiSuccessResponseWithPayload, TaiTaxAccountFailureResponse}
 import uk.gov.hmrc.tai.model.domain.income.OtherBasisOperation
 import uk.gov.hmrc.tai.model.domain.{TaxCodeChange, TaxCodeChangeReason, TaxCodeChangeReasons, TaxCodeRecord}
+import uk.gov.hmrc.tai.util.factory.TaxCodeChangeReasonsFactory
 import uk.gov.hmrc.tai.util.{TaiConstants, TaxCodeChangeReasonTypeAdded, TaxCodeChangeReasonTypeRemoved}
 import uk.gov.hmrc.time.TaxYearResolver
 import utils.WireMockHelper
@@ -157,32 +158,30 @@ class TaxCodeChangeConnectorSpec extends PlaySpec with MockitoSugar with FakeTai
         val nino = generateNino
         val taxCodeChangeReasonsUrl = s"/tai/${nino.nino}/tax-account/tax-code-change/reasons"
 
-        val taxCodeReasonNewEmployment = TaxCodeChangeReason(TaxCodeChangeReasonTypeAdded, "NEW_EMPLOYMENT", "Some development reasons")
-        val taxCodeReasonCeasedEmployment = TaxCodeChangeReason(TaxCodeChangeReasonTypeRemoved, "CEASED_EMPLOYMENT", "Some development reasons")
-        val taxCodeChangeReasons = TaxCodeChangeReasons(Seq(taxCodeReasonNewEmployment, taxCodeReasonCeasedEmployment))
-
-        val json = Json.obj(
-          "data" -> Json.obj(
-            "reasons" -> Json.arr(
-              Json.obj(
-                "reasonsType" -> TaiConstants.TaxCodeChangeTypeAdded,
-                "id" -> "NEW_EMPLOYMENT",
-                "reason" -> "Some development reasons"
-              ),
-              Json.obj(
-                "reasonsType" -> TaiConstants.TaxCodeChangeTypeRemoved,
-                "id" -> "CEASED_EMPLOYMENT",
-                "reason" -> "Some development reasons"
-              )
-            )
-          )
-        )
+        val taxCodeChangeReasons = TaxCodeChangeReasonsFactory.create
+        val taxCodeChangeReasonsJson = TaxCodeChangeReasonsFactory.createJson
 
         server.stubFor(
-          get(urlEqualTo(taxCodeChangeReasonsUrl)).willReturn(ok(json.toString()))
+          get(urlEqualTo(taxCodeChangeReasonsUrl)).willReturn(ok(taxCodeChangeReasonsJson.toString()))
         )
         val result = Await.result(testConnector.taxCodeChangeReasons(nino), 5 seconds)
         result mustEqual TaiSuccessResponseWithPayload(taxCodeChangeReasons)
+      }
+    }
+
+    "return an error" when {
+      "provided with invalid data" in {
+        val testConnector = createTestConnector
+        val nino = generateNino
+        val taxCodeChangeReasonsUrl = s"/tai/${nino.nino}/tax-account/tax-code-change/reasons"
+
+        server.stubFor(
+          get(urlEqualTo(taxCodeChangeReasonsUrl)).willReturn(serverError())
+        )
+
+        val expectedMessage = s"GET of '${testConnector.serviceUrl}/tai/$nino/tax-account/tax-code-change/reasons' returned 500. Response body: ''"
+        val result = Await.result(testConnector.taxCodeChangeReasons(nino), 5 seconds)
+        result mustEqual TaiTaxAccountFailureResponse(expectedMessage)
       }
     }
   }

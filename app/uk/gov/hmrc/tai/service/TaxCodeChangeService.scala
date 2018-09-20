@@ -43,6 +43,14 @@ trait TaxCodeChangeService {
       case _ => throw new RuntimeException("Could not fetch tax code change")
     }
   }
+
+  def taxCodeChangeReasons(nino: Nino)(implicit hc: HeaderCarrier): Future[Boolean] = {
+    taxCodeChangeConnector.hasTaxCodeChanged(nino) map {
+      case TaiSuccessResponseWithPayload(hasTaxCodeChanged: Boolean) => hasTaxCodeChanged
+      case _ => throw new RuntimeException("Could not fetch tax code change reasons")
+    }
+  }
+
   def latestTaxCodeChangeDate(nino: Nino)(implicit hc: HeaderCarrier): Future[LocalDate] = {
     taxCodeChange(nino).map(_.mostRecentTaxCodeChangeDate)
   }

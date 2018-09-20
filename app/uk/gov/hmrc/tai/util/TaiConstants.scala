@@ -347,6 +347,7 @@ object TaxCodeChangeReasonType extends TaxCodeChangeReasonType {
       case "ADDED" => JsSuccess(TaxCodeChangeReasonTypeAdded)
       case "REMOVED" => JsSuccess(TaxCodeChangeReasonTypeRemoved)
       case "ADJUSTED" => JsSuccess(TaxCodeChangeReasonTypeAdjusted)
+      case _ => throw new IllegalArgumentException("Invalid TaxCodeChangeReasonsType")
     }
 
     override def writes(taxCodeChangeReasonsType: TaxCodeChangeReasonType) = JsString(taxCodeChangeReasonsType.toString)

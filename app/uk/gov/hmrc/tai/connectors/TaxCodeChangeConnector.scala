@@ -33,7 +33,11 @@ trait TaxCodeChangeConnector {
 
   def httpHandler: HttpHandler
 
-  def taxCodeChangeUrl(nino: String): String = s"$serviceUrl/tai/$nino/tax-account/tax-code-change"
+  def baseUrl(nino: String): String = s"$serviceUrl/tai/$nino/tax-account/tax-code-change"
+
+  def taxCodeChangeUrl(nino: String): String = baseUrl(nino)
+  def hasTaxCodeChangedUrl(nino: String): String = s"${baseUrl(nino)}/exists"
+  def taxCodeChangeReasonsUrl(nino: String): String = s"${baseUrl(nino)}/reasons"
 
   def taxCodeChange(nino: Nino)(implicit hc: HeaderCarrier): Future[TaiResponse] = {
     httpHandler.getFromApi(taxCodeChangeUrl(nino.nino)) map (
@@ -45,7 +49,6 @@ trait TaxCodeChangeConnector {
         TaiTaxAccountFailureResponse(e.getMessage)
     }
   }
-  def hasTaxCodeChangedUrl(nino: String): String = s"$serviceUrl/tai/$nino/tax-account/tax-code-change/exists"
 
   def hasTaxCodeChanged(nino: Nino)(implicit hc: HeaderCarrier): Future[TaiResponse] = {
     httpHandler.getFromApi(hasTaxCodeChangedUrl(nino.nino)) map (
@@ -57,14 +60,12 @@ trait TaxCodeChangeConnector {
     }
   }
 
-  def taxCodeChangeReasonsUrl(nino: String): String = s"$serviceUrl/tai/$nino/tax-account/tax-code-change/reasons"
-
   def taxCodeChangeReasons(nino: Nino)(implicit hc: HeaderCarrier): Future[TaiResponse] = {
     httpHandler.getFromApi(taxCodeChangeReasonsUrl(nino.nino)) map (
         json => TaiSuccessResponseWithPayload((json \ "data").as[TaxCodeChangeReasons])
       ) recover {
       case e: Exception =>
-        Logger.warn(s"Couldn't retrieve tax code changed for $nino with exception:${e.getMessage}")
+        Logger.warn(s"Couldn't retrieve tax code change reasons for $nino with exception:${e.getMessage}")
         TaiTaxAccountFailureResponse(e.getMessage)
     }
   }
