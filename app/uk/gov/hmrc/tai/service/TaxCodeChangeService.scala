@@ -24,7 +24,7 @@ import uk.gov.hmrc.play.partials.HeaderCarrierForPartials
 import uk.gov.hmrc.tai.connectors.TaxCodeChangeConnector
 import uk.gov.hmrc.tai.connectors.responses.{TaiResponse, TaiSuccessResponseWithPayload, TaiTaxAccountFailureResponse}
 import uk.gov.hmrc.tai.model.domain.{TaxCodeChange, TaxCodeChangeReason, TaxCodeChangeReasons}
-import uk.gov.hmrc.tai.util.{TaxCodeChangeReasonTypeAdded, TaxCodeChangeReasonTypeAdjusted}
+import uk.gov.hmrc.tai.util.{TaxCodeChangeReasonTypeAdded, TaxCodeChangeReasonTypeAdjusted, TaxCodeChangeReasonTypeRemoved}
 
 import scala.concurrent.Future
 
@@ -50,8 +50,9 @@ trait TaxCodeChangeService {
 //      case TaiSuccessResponseWithPayload(taxCodeChangeReasons: TaxCodeChangeReasons) => taxCodeChangeReasons
 //      case _ => throw new RuntimeException("Could not fetch tax code change reasons")
 //    }
-    val adjustedAllowance = TaxCodeChangeReason(TaxCodeChangeReasonTypeAdjusted, "ALLOWANCE", "Description")
-    Future.successful(TaxCodeChangeReasons(Seq(adjustedAllowance, adjustedAllowance)))
+    val adjustedAllowance = TaxCodeChangeReason(TaxCodeChangeReasonTypeRemoved, "EMPLOYMENT", "Description")
+    val newEmployment = TaxCodeChangeReason(TaxCodeChangeReasonTypeAdded, "EMPLOYMENT", "Description")
+    Future.successful(TaxCodeChangeReasons(Seq(adjustedAllowance, newEmployment)))
   }
 
   def latestTaxCodeChangeDate(nino: Nino)(implicit hc: HeaderCarrier): Future[LocalDate] = {

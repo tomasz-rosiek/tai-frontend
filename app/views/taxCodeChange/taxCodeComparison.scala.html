@@ -92,27 +92,19 @@
 }
 
 @taxCodeReasons(reasons: Seq[String]) = {
-    <div class="notice">
-        <i class="icon icon-information">
-            <span class="visually-hidden">
-            TODO TRANSLATE - Information
-            </span>
-        </i>
-
-        @if(reasons.length == 0 || reasons.length > 3) {
-            @taxCodeReasonsBreakdown(Messages("taxCode.change.yourTaxCodeChanged.paragraph"))
+    @if(reasons.isEmpty || reasons.length > 3) {
+        @taxCodeReasonsBreakdown(Messages("taxCode.change.yourTaxCodeChanged.paragraph"))
+    } else {
+        @if(reasons.length == 1) {
+            @taxCodeReasonsBreakdown(reasons.head)
         } else {
-            @if(reasons.length == 1) {
-                @taxCodeReasonsBreakdown(reasons.head)
-            } else {
-                @taxCodeReasonsBreakdown("TODO TRANSLATE We changed this because:", Some(taxCodeReasonsList(reasons)))
-            }
+            @taxCodeReasonsBreakdown("We changed this because:", Some(taxCodeReasonsList(reasons)))
         }
-    </div>
+    }
 }
 
 @taxCodeReasonsList(reasons: Seq[String]) = {
-    <ul>
+    <ul class="list-bullet tax-code-change__reasons-list">
         @for(reason <- reasons) {
             <li>@reason</li>
         }
@@ -120,8 +112,18 @@
 }
 
 @taxCodeReasonsBreakdown(title: String, body: Option[Html] = None) = {
+    <div class="notice">
+        <i class="icon icon-information">
+            <span class="visually-hidden">
+            TODO TRANSLATE - Information
+            </span>
+        </i>
+
     <strong class="bold-small">
         @title
     </strong>
-    @body
+    </div>
+    <div>
+        @body
+    </div>
 }
