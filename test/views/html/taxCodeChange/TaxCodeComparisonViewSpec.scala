@@ -34,7 +34,8 @@ class TaxCodeComparisonViewSpec extends TaiViewSpec {
   val taxCodeRecord2 = taxCodeRecord1.copy(startDate = startDate.plusMonths(1).plusDays(1), endDate = TaxYearResolver.endOfCurrentTaxYear, payrollNumber = None)
   val taxCodeRecord3 = taxCodeRecord1.copy(taxCode = "BR", startDate = startDate.plusDays(3), endDate = TaxYearResolver.endOfCurrentTaxYear, pensionIndicator = false, payrollNumber = Some("Payroll Number"))
   val taxCodeChange: TaxCodeChange = TaxCodeChange(Seq(taxCodeRecord1, taxCodeRecord3), Seq(taxCodeRecord2, taxCodeRecord3))
-  val taxCodeReasons = TaxCodeChangeReasonsFactory.create
+
+  val taxCodeReasons = TaxCodeChangeReasonsFactory.createEmpty
   val viewModel: TaxCodeChangeViewModel = TaxCodeChangeViewModel(taxCodeChange, taxCodeReasons, Map[String, BigDecimal]())
 
   override def view = views.html.taxCodeChange.taxCodeComparison(viewModel)
@@ -65,8 +66,58 @@ class TaxCodeComparisonViewSpec extends TaiViewSpec {
       preHeaderText = Messages("taxCode.change.journey.preHeading"),
       mainHeaderText = Messages("taxCode.change.yourTaxCodeChanged.h1", Dates.formatDate(viewModel.changeDate)))
 
-    "display the correct paragraphs" in {
-      doc(view) must haveParagraphWithText(Messages("taxCode.change.yourTaxCodeChanged.paragraph"))
+
+    "display the generic change message" when {
+      "no change reasons are supplied" in {
+        doc(view) must haveStrongWithText(Messages("taxCode.change.yourTaxCodeChanged.paragraph"))
+      }
+
+      "4 or more reasons are supplied" in {
+        val reasons = TaxCodeChangeReasonsFactory.createWithFourReasons
+        val reasonsViewModel: TaxCodeChangeViewModel = TaxCodeChangeViewModel(taxCodeChange, reasons, Map[String, BigDecimal]())
+
+        val reasonsView = views.html.taxCodeChange.taxCodeComparison(reasonsViewModel)
+
+        doc(reasonsView) must haveStrongWithText(Messages("taxCode.change.yourTaxCodeChanged.paragraph"))
+      }
+    }
+
+    "display a single bold reason" when {
+      "One change reason is supplied" in {
+        val singleTaxCodeReasons = TaxCodeChangeReasonsFactory.createWithSingleAllowanceReason
+        val singleReasonViewModel: TaxCodeChangeViewModel = TaxCodeChangeViewModel(taxCodeChange, singleTaxCodeReasons, Map[String, BigDecimal]())
+
+        val singleReasonView = views.html.taxCodeChange.taxCodeComparison(singleReasonViewModel)
+
+        doc(singleReasonView) must haveStrongWithText(Messages("taxCode.change.yourTaxCodeChanged.reasons.adjusted.allowance"))
+      }
+    }
+
+    "display a bulleted list of changes including number of current employments" when {
+      "2 change reasons are supplied" in {
+        val reasons = TaxCodeChangeReasonsFactory.createWithTwoReasons
+        val reasonsViewModel: TaxCodeChangeViewModel = TaxCodeChangeViewModel(taxCodeChange, reasons, Map[String, BigDecimal]())
+
+        val reasonsView = views.html.taxCodeChange.taxCodeComparison(reasonsViewModel)
+
+        doc(reasonsView) must haveStrongWithText("TODO TRANSLATE We changed this because:")
+        reasons.reasons.foreach(reason => {
+          doc(reasonsView) must haveListItemWithText(Messages(s"taxCode.change.yourTaxCodeChanged.reasons.${reason.reason.toString.toLowerCase}.${reason.id.toLowerCase}"))
+        })
+      }
+
+      "3 change reasons are supplied" in {
+        val reasons = TaxCodeChangeReasonsFactory.createWithThreeReasons
+        val reasonsViewModel: TaxCodeChangeViewModel = TaxCodeChangeViewModel(taxCodeChange, reasons, Map[String, BigDecimal]())
+
+        val reasonsView = views.html.taxCodeChange.taxCodeComparison(reasonsViewModel)
+
+        doc(reasonsView) must haveStrongWithText("TODO TRANSLATE We changed this because:")
+
+        reasons.reasons.foreach(reason => {
+          doc(reasonsView) must haveListItemWithText(Messages(s"taxCode.change.yourTaxCodeChanged.reasons.${reason.reason.toString.toLowerCase}.${reason.id.toLowerCase}"))
+        })
+      }
     }
 
     "displays the previous tax code section title" in {

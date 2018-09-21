@@ -16,9 +16,9 @@
 
 package uk.gov.hmrc.tai.util.factory
 
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.{JsArray, JsObject, Json}
 import uk.gov.hmrc.tai.model.domain.{TaxCodeChangeReason, TaxCodeChangeReasons}
-import uk.gov.hmrc.tai.util.{TaiConstants, TaxCodeChangeReasonTypeAdded, TaxCodeChangeReasonTypeRemoved}
+import uk.gov.hmrc.tai.util.{TaiConstants, TaxCodeChangeReasonTypeAdded, TaxCodeChangeReasonTypeAdjusted, TaxCodeChangeReasonTypeRemoved}
 
 object TaxCodeChangeReasonsFactory {
 
@@ -26,25 +26,52 @@ object TaxCodeChangeReasonsFactory {
     TaxCodeChangeReasons(Seq(TaxCodeChangeReasonFactory.createNewEmploymentReason, TaxCodeChangeReasonFactory.createCeasedEmploymentReason))
   }
 
+  def createWithSingleAllowanceReason: TaxCodeChangeReasons = {
+    TaxCodeChangeReasons(Seq(TaxCodeChangeReasonFactory.createAdjustedAllowanceReason))
+  }
+
+  def createWithTwoReasons: TaxCodeChangeReasons = {
+    TaxCodeChangeReasons(Seq(TaxCodeChangeReasonFactory.createNewEmploymentReason, TaxCodeChangeReasonFactory.createCeasedEmploymentReason))
+  }
+
+  def createWithThreeReasons: TaxCodeChangeReasons = {
+    TaxCodeChangeReasons(Seq(
+      TaxCodeChangeReasonFactory.createNewEmploymentReason,
+      TaxCodeChangeReasonFactory.createCeasedEmploymentReason,
+      TaxCodeChangeReasonFactory.createAdjustedAllowanceReason
+    ))
+  }
+
+  def createWithFourReasons: TaxCodeChangeReasons = {
+    TaxCodeChangeReasons(Seq(
+      TaxCodeChangeReasonFactory.createNewEmploymentReason,
+      TaxCodeChangeReasonFactory.createCeasedEmploymentReason,
+      TaxCodeChangeReasonFactory.createAdjustedAllowanceReason,
+      TaxCodeChangeReasonFactory.createAdjustedExpenseReason
+    ))
+  }
+
   def createEmpty: TaxCodeChangeReasons = {
     TaxCodeChangeReasons(Seq())
   }
 
   def createJson: JsObject = {
-    Json.obj(
-      "data" -> Json.obj(
-        "reasons" -> Json.arr(
-          TaxCodeChangeReasonFactory.createNewEmploymentReasonJson,
-          TaxCodeChangeReasonFactory.createCeasedEmploymentReasonJson
-        )
-      )
+    val reasons = Json.arr(
+      TaxCodeChangeReasonFactory.createNewEmploymentReasonJson,
+      TaxCodeChangeReasonFactory.createCeasedEmploymentReasonJson
     )
+
+    employmentReasonsJson(reasons)
   }
 
   def createEmptyJson: JsObject = {
-    Json.obj(
+    employmentReasonsJson(Json.arr())
+  }
+
+  private def employmentReasonsJson(reasons: JsArray): JsObject = {
+    Json.obj (
       "data" -> Json.obj(
-        "reasons" -> Json.arr()
+        "reasons" -> reasons
       )
     )
   }
@@ -52,26 +79,34 @@ object TaxCodeChangeReasonsFactory {
 
 object TaxCodeChangeReasonFactory {
   def createNewEmploymentReason: TaxCodeChangeReason = {
-    TaxCodeChangeReason(TaxCodeChangeReasonTypeAdded, "EMPLOYMENT", "Some development reasons")
+    TaxCodeChangeReason(TaxCodeChangeReasonTypeAdded, "EMPLOYMENT", "Description")
   }
 
   def createNewEmploymentReasonJson: JsObject = {
-    Json.obj(
-      "reasonsType" -> "ADDED",
-      "id" -> "EMPLOYMENT",
-      "reason" -> "Some development reasons"
-    )
+    employmentReasonJSON("ADDED","EMPLOYMENT","Description")
   }
 
   def createCeasedEmploymentReason: TaxCodeChangeReason = {
-    TaxCodeChangeReason(TaxCodeChangeReasonTypeRemoved, "EMPLOYMENT", "Some development reasons")
+    TaxCodeChangeReason(TaxCodeChangeReasonTypeRemoved, "EMPLOYMENT", "Description")
+  }
+
+  def createAdjustedAllowanceReason: TaxCodeChangeReason = {
+    TaxCodeChangeReason(TaxCodeChangeReasonTypeAdjusted, "ALLOWANCE", "Description")
+  }
+
+  def createAdjustedExpenseReason: TaxCodeChangeReason = {
+    TaxCodeChangeReason(TaxCodeChangeReasonTypeAdjusted, "EXPENSE", "Description")
   }
 
   def createCeasedEmploymentReasonJson: JsObject = {
+    employmentReasonJSON("REMOVED","EMPLOYMENT","Description")
+  }
+
+  private def employmentReasonJSON(reason: String, id: String, description: String): JsObject = {
     Json.obj(
-      "reasonsType" -> "REMOVED",
-      "id" -> "EMPLOYMENT",
-      "reason" -> "Some development reasons"
+      "reason" -> reason,
+      "id" -> id,
+      "description" -> description
     )
   }
 }

@@ -1293,3 +1293,7 @@ taxCode.change.yourTaxCodeChanged.previousTaxCodeDetails.screenReader=From {0} t
 taxCode.change.yourTaxCodeChanged.reasons.added.employment=You have a new employment
 taxCode.change.yourTaxCodeChanged.reasons.removed.employment=You have ceased a employment
 taxCode.change.yourTaxCodeChanged.reasons.added.medical=You have a new medical allowance
+
+taxCode.change.yourTaxCodeChanged.reasons.adjusted.allowance=This could be because of a change to your income or tax-free amount.
+taxCode.change.yourTaxCodeChanged.reasons.adjusted.expense=This could be because of a change to your income or expenses.
+taxCode.change.yourTaxCodeChanged.reasons.adjusted.deduction=This could be because of a change to your income or benefits.

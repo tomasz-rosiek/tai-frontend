@@ -47,9 +47,12 @@
     gaCustomTitle = None
 ){
 <div class="column-two-thirds">
+
     <div class="grid-row">
-        <p class="lede">@Messages("taxCode.change.yourTaxCodeChanged.paragraph")</p>
+        @taxCodeReasons(taxCodeChangeViewModel.reasons)
     </div>
+
+
     <div class="grid-row tax-code-change margin-bottom-xlarge">
         @taxCodePairs(taxCodeChangeViewModel.pairs)
     </div>
@@ -86,4 +89,39 @@
             @taxCodeRecordPod(pair.current, "current")
         }
     </div>
+}
+
+@taxCodeReasons(reasons: Seq[String]) = {
+    <div class="notice">
+        <i class="icon icon-information">
+            <span class="visually-hidden">
+            TODO TRANSLATE - Information
+            </span>
+        </i>
+
+        @if(reasons.length == 0 || reasons.length > 3) {
+            @taxCodeReasonsBreakdown(Messages("taxCode.change.yourTaxCodeChanged.paragraph"))
+        } else {
+            @if(reasons.length == 1) {
+                @taxCodeReasonsBreakdown(reasons.head)
+            } else {
+                @taxCodeReasonsBreakdown("TODO TRANSLATE We changed this because:", Some(taxCodeReasonsList(reasons)))
+            }
+        }
+    </div>
+}
+
+@taxCodeReasonsList(reasons: Seq[String]) = {
+    <ul>
+        @for(reason <- reasons) {
+            <li>@reason</li>
+        }
+    </ul>
+}
+
+@taxCodeReasonsBreakdown(title: String, body: Option[Html] = None) = {
+    <strong class="bold-small">
+        @title
+    </strong>
+    @body
 }

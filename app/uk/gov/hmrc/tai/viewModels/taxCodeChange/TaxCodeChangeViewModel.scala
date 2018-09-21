@@ -36,8 +36,8 @@ object TaxCodeChangeViewModel extends TaxCodeDescriptor {
   }
 
   def translateTaxCodeChangeReasons(taxCodeReasons:TaxCodeChangeReasons)(implicit messages: Messages): Seq[String] = {
-    taxCodeReasons.reasons.map(reason => {
-      messages(s"taxCode.change.yourTaxCodeChanged.reasons.${reason.reasonsType.toString.toLowerCase}.${reason.id.toLowerCase}")
+    taxCodeReasons.reasons.map(taxCodeChangeReason => {
+      messages(s"taxCode.change.yourTaxCodeChanged.reasons.${taxCodeChangeReason.reason.toString.toLowerCase}.${taxCodeChangeReason.id.toLowerCase}")
     })
   }
 

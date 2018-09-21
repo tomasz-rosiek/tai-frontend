@@ -33,11 +33,11 @@ trait TaxCodeChangeConnector {
 
   def httpHandler: HttpHandler
 
-  def baseUrl(nino: String): String = s"$serviceUrl/tai/$nino/tax-account/tax-code-change"
+  def baseTaxCodeChangeUrl(nino: String): String = s"$serviceUrl/tai/$nino/tax-account/tax-code-change"
 
-  def taxCodeChangeUrl(nino: String): String = baseUrl(nino)
-  def hasTaxCodeChangedUrl(nino: String): String = s"${baseUrl(nino)}/exists"
-  def taxCodeChangeReasonsUrl(nino: String): String = s"${baseUrl(nino)}/reasons"
+  def taxCodeChangeUrl(nino: String): String = baseTaxCodeChangeUrl(nino)
+  def hasTaxCodeChangedUrl(nino: String): String = s"${baseTaxCodeChangeUrl(nino)}/exists"
+  def taxCodeChangeReasonsUrl(nino: String): String = s"${baseTaxCodeChangeUrl(nino)}/reasons"
 
   def taxCodeChange(nino: Nino)(implicit hc: HeaderCarrier): Future[TaiResponse] = {
     httpHandler.getFromApi(taxCodeChangeUrl(nino.nino)) map (
