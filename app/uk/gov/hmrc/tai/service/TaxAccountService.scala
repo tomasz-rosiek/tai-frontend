@@ -29,6 +29,8 @@ import scala.concurrent.Future
 
 trait TaxAccountService {
 
+  type ScottishTaxBandRates = Map[String, BigDecimal]
+
   def taxAccountConnector: TaxAccountConnector
 
   def taxCodeIncomes(nino: Nino, year: TaxYear)(implicit hc: HeaderCarrier): Future[TaiResponse] = {
@@ -51,7 +53,7 @@ trait TaxAccountService {
     taxAccountConnector.totalTax(nino, year)
   }
 
-  def scottishBandRates(nino: Nino, year: TaxYear, taxCodes: Seq[String])(implicit hc: HeaderCarrier): Future[Map[String, BigDecimal]] = {
+  def scottishBandRates(nino: Nino, year: TaxYear, taxCodes: Seq[String])(implicit hc: HeaderCarrier): Future[ScottishTaxBandRates] = {
     def isScottishStandAloneTaxcode(taxCode: String) = "D0|D1|D2|D3|D4|D5|D6|D7|D8".r.findFirstIn(taxCode).isDefined
 
     if (taxCodes.exists(isScottishStandAloneTaxcode)) {

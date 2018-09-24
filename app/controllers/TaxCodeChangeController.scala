@@ -28,8 +28,9 @@ import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.tai.config.{FeatureTogglesConfig, TaiHtmlPartialRetriever}
 import uk.gov.hmrc.tai.connectors.LocalTemplateRenderer
 import uk.gov.hmrc.tai.model.TaxYear
+import uk.gov.hmrc.tai.model.domain.{TaxCodeChange, TaxCodeChangeReasons, TaxCodeComparison}
 import uk.gov.hmrc.tai.service.benefits.CompanyCarService
-import uk.gov.hmrc.tai.service.{CodingComponentService, EmploymentService, PersonService, TaxCodeChangeService, TaxAccountService}
+import uk.gov.hmrc.tai.service.{CodingComponentService, EmploymentService, PersonService, TaxAccountService, TaxCodeChangeService}
 import uk.gov.hmrc.tai.viewModels.taxCodeChange.{TaxCodeChangeViewModel, YourTaxFreeAmountViewModel}
 import uk.gov.hmrc.urls.Link
 
@@ -50,8 +51,6 @@ trait TaxCodeChangeController extends TaiBaseController
 
   def taxCodeChangeService: TaxCodeChangeService
 
-  def taxAccountService: TaxAccountService
-
   def taxCodeComparison: Action[AnyContent] = authorisedForTai(personService).async {
     implicit user =>
       implicit person =>
@@ -60,13 +59,10 @@ trait TaxCodeChangeController extends TaiBaseController
             ServiceCheckLite.personDetailsCheck {
               val nino: Nino = Nino(user.getNino)
 
-              // TODO: Move TaxCodeChangeReasons into one taxCodeChangeService call
               for {
-                taxCodeChange <- taxCodeChangeService.taxCodeChange(nino)
-                taxCodeChangeReasons <- taxCodeChangeService.taxCodeChangeReasons(nino)
-                scottishTaxRateBands <- taxAccountService.scottishBandRates(nino, TaxYear(), taxCodeChange.uniqueTaxCodes)
+                taxCodeComparison: TaxCodeComparison <- taxCodeChangeService.taxCodeComparison(nino)
               } yield {
-                val viewModel = TaxCodeChangeViewModel(taxCodeChange,taxCodeChangeReasons, scottishTaxRateBands)
+                val viewModel = TaxCodeChangeViewModel(taxCodeComparison.taxCodeChange, taxCodeComparison.taxCodeChangeReasons, taxCodeComparison.scottishTaxBandRates)
                 Ok(views.html.taxCodeChange.taxCodeComparison(viewModel))
               }
             }
@@ -141,5 +137,4 @@ object TaxCodeChangeController extends TaxCodeChangeController with Authenticati
   override val codingComponentService: CodingComponentService = CodingComponentService
   override val employmentService: EmploymentService = EmploymentService
   override val companyCarService: CompanyCarService = CompanyCarService
-  override val taxAccountService: TaxAccountService = TaxAccountService
 }

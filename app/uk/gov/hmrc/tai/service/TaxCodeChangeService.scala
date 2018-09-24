@@ -22,13 +22,15 @@ import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tai.connectors.TaxCodeChangeConnector
 import uk.gov.hmrc.tai.connectors.responses.{TaiResponse, TaiSuccessResponseWithPayload, TaiTaxAccountFailureResponse}
-import uk.gov.hmrc.tai.model.domain._
+import uk.gov.hmrc.tai.model.TaxYear
+import uk.gov.hmrc.tai.model.domain.{TaxCodeChange, TaxCodeChangeReasons, _}
 
 import scala.concurrent.Future
 
 trait TaxCodeChangeService {
 
   def taxCodeChangeConnector: TaxCodeChangeConnector
+  def taxAccountService: TaxAccountService
 
   def taxCodeChange(nino: Nino)(implicit hc: HeaderCarrier): Future[TaxCodeChange] = {
     taxCodeChangeConnector.taxCodeChange(nino) map {
@@ -48,8 +50,21 @@ trait TaxCodeChangeService {
       case TaiSuccessResponseWithPayload(taxCodeChangeReasons: TaxCodeChangeReasons) => taxCodeChangeReasons
       case _ => throw new RuntimeException("Could not fetch tax code change reasons")
     }
-//    val adjustedAllowance = TaxCodeChangeReason(TaxCodeChangeReasonTypeAdjusted, "ALLOWANCE", "Description")
+//    val adjustedAllowance = TaxCodeChangeReason(TaxCodeChangeReasonTypeAdjusted, "ALLOWANCE")
 //    Future.successful(TaxCodeChangeReasons(Seq(adjustedAllowance)))
+  }
+
+  def taxCodeComparison(nino: Nino)(implicit hc: HeaderCarrier): Future[TaxCodeComparison] = {
+    for {
+      change <- taxCodeChange(nino)
+      reasons <- taxCodeChangeReasons(nino)
+      scottishTaxRateBands <- taxAccountService.scottishBandRates(nino, TaxYear(), change.uniqueTaxCodes)
+    } yield {
+      (change, reasons, scottishTaxRateBands) match {
+        case (_: TaxCodeChange, _: TaxCodeChangeReasons, _: TaxAccountService.ScottishTaxBandRates) => TaxCodeComparison(change, reasons, scottishTaxRateBands)
+        case _ => throw new RuntimeException("Could not fetch tax code change or tax code change reasons")
+      }
+    }
   }
 
   def latestTaxCodeChangeDate(nino: Nino)(implicit hc: HeaderCarrier): Future[LocalDate] = {
@@ -59,4 +74,5 @@ trait TaxCodeChangeService {
 
 object TaxCodeChangeService extends TaxCodeChangeService {
   override val taxCodeChangeConnector: TaxCodeChangeConnector = TaxCodeChangeConnector
+  override val taxAccountService: TaxAccountService = TaxAccountService
 }

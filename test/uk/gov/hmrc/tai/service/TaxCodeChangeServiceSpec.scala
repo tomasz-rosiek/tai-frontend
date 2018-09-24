@@ -22,10 +22,10 @@ import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 import uk.gov.hmrc.domain.{Generator, Nino}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.tai.connectors.TaxCodeChangeConnector
+import uk.gov.hmrc.tai.connectors.{TaxAccountConnector, TaxCodeChangeConnector}
 import uk.gov.hmrc.tai.connectors.responses.{TaiSuccessResponseWithPayload, TaiTaxAccountFailureResponse}
 import uk.gov.hmrc.tai.model.domain.income.OtherBasisOperation
-import uk.gov.hmrc.tai.model.domain.{TaxCodeChange, TaxCodeRecord}
+import uk.gov.hmrc.tai.model.domain.{TaxCodeChange, TaxCodeComparison, TaxCodeRecord}
 import uk.gov.hmrc.tai.util.factory.TaxCodeChangeReasonsFactory
 import uk.gov.hmrc.time.TaxYearResolver
 
@@ -87,6 +87,43 @@ class TaxCodeChangeServiceSpec extends PlaySpec with MockitoSugar{
     }
   }
 
+  "TaxCodeChangeComparison" must {
+    "returns a TaxCodeComparison with valid change, reasons and scottish tax rate bands" when {
+      "all API calls are successful" in {
+        val taxCodeChangeServiceMock = createTaxCodeChangeServiceMock
+        val nino = generateNino
+
+        val taxCodeChange = TaxCodeChange(Seq(taxCodeRecord1), Seq(taxCodeRecord2))
+        val taxCodeChangeReasons = TaxCodeChangeReasonsFactory.create
+        val scottishTaxRateBands = Map[String, BigDecimal]()
+
+        when(taxCodeChangeServiceMock.taxCodeChangeConnector.taxCodeChange(any())(any())).thenReturn(Future.successful(TaiSuccessResponseWithPayload(taxCodeChange)))
+        when(taxCodeChangeServiceMock.taxCodeChangeConnector.taxCodeChangeReasons(any())(any())).thenReturn(Future.successful(TaiSuccessResponseWithPayload(taxCodeChangeReasons)))
+        when(taxCodeChangeServiceMock.taxAccountService.scottishBandRates(any(), any(), any())(any())).thenReturn(Future.successful(scottishTaxRateBands))
+
+        val result = taxCodeChangeServiceMock.taxCodeComparison(nino)
+        Await.result(result, 5.seconds) mustBe TaxCodeComparison(taxCodeChange, taxCodeChangeReasons, scottishTaxRateBands)
+      }
+    }
+    "return a Runtime exception" when {
+      "one API call fails" in {
+        val taxCodeChangeServiceMock = createTaxCodeChangeServiceMock
+        val nino = generateNino
+
+        val failure = TaiTaxAccountFailureResponse("")
+        val taxCodeChangeReasons = TaxCodeChangeReasonsFactory.create
+        val scottishTaxRateBands = Map[String, BigDecimal]()
+
+        when(taxCodeChangeServiceMock.taxCodeChangeConnector.taxCodeChange(any())(any())).thenReturn(Future.successful(TaiSuccessResponseWithPayload(failure)))
+        when(taxCodeChangeServiceMock.taxCodeChangeConnector.taxCodeChangeReasons(any())(any())).thenReturn(Future.successful(TaiSuccessResponseWithPayload(taxCodeChangeReasons)))
+        when(taxCodeChangeServiceMock.taxAccountService.scottishBandRates(any(), any(), any())(any())).thenReturn(Future.successful(scottishTaxRateBands))
+
+        val exception = the[RuntimeException] thrownBy Await.result(taxCodeChangeServiceMock.taxCodeComparison(nino), 5.seconds)
+        exception.getMessage mustBe "Could not fetch tax code change"
+      }
+    }
+  }
+
   val startDate = TaxYearResolver.startOfCurrentTaxYear
   val taxCodeRecord1 = TaxCodeRecord("code", startDate, startDate.plusDays(1), OtherBasisOperation,"Employer 1", false, Some("1234"), true)
   val taxCodeRecord2 = taxCodeRecord1.copy(startDate = startDate.plusDays(2), endDate = TaxYearResolver.endOfCurrentTaxYear)
@@ -97,6 +134,6 @@ class TaxCodeChangeServiceSpec extends PlaySpec with MockitoSugar{
 
   private class TaxCodeChangeServiceMock extends TaxCodeChangeService {
     override val taxCodeChangeConnector: TaxCodeChangeConnector = mock[TaxCodeChangeConnector]
+    override val taxAccountService: TaxAccountService = mock[TaxAccountService]
   }
-
 }

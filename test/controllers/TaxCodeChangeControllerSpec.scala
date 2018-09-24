@@ -33,7 +33,7 @@ import uk.gov.hmrc.play.frontend.auth.connectors.{AuthConnector, DelegationConne
 import uk.gov.hmrc.play.partials.FormPartialRetriever
 import uk.gov.hmrc.renderer.TemplateRenderer
 import uk.gov.hmrc.tai.model.domain.calculation.CodingComponent
-import uk.gov.hmrc.tai.model.domain.{GiftAidPayments, GiftsSharesCharity, TaxCodeChange, TaxCodeRecord}
+import uk.gov.hmrc.tai.model.domain._
 import uk.gov.hmrc.tai.service.benefits.CompanyCarService
 import uk.gov.hmrc.tai.service._
 import uk.gov.hmrc.http.HeaderCarrier
@@ -117,10 +117,9 @@ class TaxCodeChangeControllerSpec extends PlaySpec
 
         val taxCodeChange = TaxCodeChange(Seq(taxCodeRecord1), Seq(taxCodeRecord2))
         val taxCodeChangeReasons = TaxCodeChangeReasonsFactory.create
+        val taxCodeComparison = TaxCodeComparison(taxCodeChange, taxCodeChangeReasons, Map[String, BigDecimal]())
 
-        when(SUT.taxCodeChangeService.taxCodeChangeReasons(any())(any())).thenReturn(Future.successful(taxCodeChangeReasons))
-        when(SUT.taxCodeChangeService.taxCodeChange(any())(any())).thenReturn(Future.successful(taxCodeChange))
-        when(SUT.taxAccountService.scottishBandRates(any(), any(), any())(any())).thenReturn(Future.successful(Map[String, BigDecimal]()))
+        when(SUT.taxCodeChangeService.taxCodeComparison(any())(any())).thenReturn(Future.successful(taxCodeComparison))
 
         val result = SUT.taxCodeComparison()(RequestBuilder.buildFakeRequestWithAuth("GET"))
 
@@ -164,7 +163,6 @@ class TaxCodeChangeControllerSpec extends PlaySpec
     override val employmentService: EmploymentService = mock[EmploymentService]
     override val companyCarService: CompanyCarService = mock[CompanyCarService]
     override val taxCodeChangeService: TaxCodeChangeService = mock[TaxCodeChangeService]
-    override val taxAccountService: TaxAccountService = mock[TaxAccountService]
     override protected val delegationConnector: DelegationConnector = mock[DelegationConnector]
     override protected val authConnector: AuthConnector = mock[AuthConnector]
     override val auditConnector: AuditConnector = mock[AuditConnector]
