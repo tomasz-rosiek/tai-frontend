@@ -78,34 +78,34 @@ object TaxCodeChangeReasonsFactory {
 
 object TaxCodeChangeReasonFactory {
   def createNewEmploymentReason: TaxCodeChangeReason = {
-    TaxCodeChangeReason(TaxCodeChangeReasonTypeAdded, "EMPLOYMENT", "Description")
+    TaxCodeChangeReason(TaxCodeChangeReasonTypeAdded, "EMPLOYMENT")
   }
 
   def createNewEmploymentReasonJson: JsObject = {
-    employmentReasonJSON("ADDED","EMPLOYMENT","Description")
+    employmentReasonJSON("ADDED","EMPLOYMENT")
   }
 
   def createCeasedEmploymentReason: TaxCodeChangeReason = {
-    TaxCodeChangeReason(TaxCodeChangeReasonTypeRemoved, "EMPLOYMENT", "Description")
+    TaxCodeChangeReason(TaxCodeChangeReasonTypeRemoved, "EMPLOYMENT")
   }
 
   def createAdjustedAllowanceReason: TaxCodeChangeReason = {
-    TaxCodeChangeReason(TaxCodeChangeReasonTypeAdjusted, "ALLOWANCE", "Description")
+    TaxCodeChangeReason(TaxCodeChangeReasonTypeAdjusted, "ALLOWANCE")
   }
 
   def createAdjustedExpenseReason: TaxCodeChangeReason = {
-    TaxCodeChangeReason(TaxCodeChangeReasonTypeAdjusted, "EXPENSE", "Description")
+    TaxCodeChangeReason(TaxCodeChangeReasonTypeAdjusted, "EXPENSE")
   }
 
   def createCeasedEmploymentReasonJson: JsObject = {
-    employmentReasonJSON("REMOVED","EMPLOYMENT","Description")
+    employmentReasonJSON("REMOVED","EMPLOYMENT")
   }
 
-  private def employmentReasonJSON(reason: String, id: String, description: String): JsObject = {
+  private def employmentReasonJSON(reason: String, id: String): JsObject = {
     Json.obj(
       "reason" -> reason,
       "id" -> id,
-      "description" -> description
+      "description" -> "Description from API"
     )
   }
 }

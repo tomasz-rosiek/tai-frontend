@@ -48,9 +48,8 @@ trait TaxCodeChangeService {
       case TaiSuccessResponseWithPayload(taxCodeChangeReasons: TaxCodeChangeReasons) => taxCodeChangeReasons
       case _ => throw new RuntimeException("Could not fetch tax code change reasons")
     }
-//    val adjustedAllowance = TaxCodeChangeReason(TaxCodeChangeReasonTypeRemoved, "EMPLOYMENT", "Description")
-//    val newEmployment = TaxCodeChangeReason(TaxCodeChangeReasonTypeAdded, "EMPLOYMENT", "Description")
-//    Future.successful(TaxCodeChangeReasons(Seq(adjustedAllowance, newEmployment)))
+//    val adjustedAllowance = TaxCodeChangeReason(TaxCodeChangeReasonTypeAdjusted, "ALLOWANCE", "Description")
+//    Future.successful(TaxCodeChangeReasons(Seq(adjustedAllowance)))
   }
 
   def latestTaxCodeChangeDate(nino: Nino)(implicit hc: HeaderCarrier): Future[LocalDate] = {

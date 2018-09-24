@@ -100,7 +100,7 @@ class TaxCodeComparisonViewSpec extends TaiViewSpec {
 
         val reasonsView = views.html.taxCodeChange.taxCodeComparison(reasonsViewModel)
 
-        doc(reasonsView) must haveStrongWithText("TODO TRANSLATE We changed this because:")
+        doc(reasonsView) must haveStrongWithText(Messages("taxCode.change.yourTaxCodeChanged.weChangedThisBecause"))
         reasons.reasons.foreach(reason => {
           doc(reasonsView) must haveListItemWithText(Messages(s"taxCode.change.yourTaxCodeChanged.reasons.${reason.reason.toString.toLowerCase}.${reason.id.toLowerCase}"))
         })
@@ -112,7 +112,7 @@ class TaxCodeComparisonViewSpec extends TaiViewSpec {
 
         val reasonsView = views.html.taxCodeChange.taxCodeComparison(reasonsViewModel)
 
-        doc(reasonsView) must haveStrongWithText("TODO TRANSLATE We changed this because:")
+        doc(reasonsView) must haveStrongWithText(Messages("taxCode.change.yourTaxCodeChanged.weChangedThisBecause"))
 
         reasons.reasons.foreach(reason => {
           doc(reasonsView) must haveListItemWithText(Messages(s"taxCode.change.yourTaxCodeChanged.reasons.${reason.reason.toString.toLowerCase}.${reason.id.toLowerCase}"))

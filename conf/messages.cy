@@ -1289,6 +1289,7 @@ taxCode.change.yourTaxCodeChanged.understand=Deall beth mae {0} yn ei olygu
 taxCode.change.yourTaxCodeChanged.currentTaxCodeDetails.screenReader=O {0} ymlaen, eich cod treth ar gyfer {2} yw {3}
 taxCode.change.yourTaxCodeChanged.previousTaxCodeDetails.screenReader=O {0} i {1}, eich cod treth ar gyfer {2} oedd {3}
 
-taxCode.change.yourTaxCodeChanged.reasons.added.employment=TODO: You have a new employment
-taxCode.change.yourTaxCodeChanged.reasons.removed.employment=TODO: You have ceased a employment
-taxCode.change.yourTaxCodeChanged.reasons.added.medical=TODO: You have a new medical allowance
+taxCode.change.yourTaxCodeChanged.weChangedThisBecause=TODO: We changed this because:
+taxCode.change.yourTaxCodeChanged.reasons.adjusted.allowance=Gallai hyn fod o ganlyniad i newid i’ch incwm neu’ch swm rhydd o dreth.
+taxCode.change.yourTaxCodeChanged.reasons.adjusted.expense=Gallai hyn fod o ganlyniad i newid i’ch incwm neu’ch treuliau.
+taxCode.change.yourTaxCodeChanged.reasons.adjusted.deduction=Gallai hyn fod o ganlyniad i newid i’ch incwm neu’ch buddiannau.

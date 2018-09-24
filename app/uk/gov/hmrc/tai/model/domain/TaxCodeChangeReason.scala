@@ -18,7 +18,7 @@ package uk.gov.hmrc.tai.model.domain
 
 import play.api.libs.json.Json
 
-case class TaxCodeChangeReason(reason: TaxCodeChangeReasonType, id: String, description: String) {}
+case class TaxCodeChangeReason(reason: TaxCodeChangeReasonType, id: String) {}
 
 object TaxCodeChangeReason {
   implicit val format = Json.format[TaxCodeChangeReason]

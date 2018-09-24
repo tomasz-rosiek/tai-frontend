@@ -98,7 +98,10 @@
         @if(reasons.length == 1) {
             @taxCodeReasonsBreakdown(reasons.head)
         } else {
-            @taxCodeReasonsBreakdown("TODO TRANSLATE We changed this because:", Some(taxCodeReasonsList(reasons)))
+            @taxCodeReasonsBreakdown(
+                Messages("taxCode.change.yourTaxCodeChanged.weChangedThisBecause"),
+                Some(taxCodeReasonsList(reasons))
+            )
         }
     }
 }
