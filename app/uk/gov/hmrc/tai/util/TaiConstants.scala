@@ -328,35 +328,3 @@ object TaiConstants {
 
   val HigherRateBandIncome = 150000
 }
-
-
-// TODO: MOVE SEAN ARMSTRONG
-sealed trait TaxCodeChangeReasonType {
-  def identifier: String
-  override def toString: String = this.identifier
-}
-
-case object TaxCodeChangeReasonTypeAdded extends TaxCodeChangeReasonType {
-  override def identifier: String = "ADDED"
-}
-case object TaxCodeChangeReasonTypeRemoved extends TaxCodeChangeReasonType {
-  override def identifier: String = "REMOVED"
-}
-case object TaxCodeChangeReasonTypeAdjusted extends TaxCodeChangeReasonType {
-  override def identifier: String = "ADJUSTED"
-}
-
-object TaxCodeChangeReasonType extends TaxCodeChangeReasonType {
-  override def identifier: String = ""
-
-  implicit val format = new Format[TaxCodeChangeReasonType] {
-    override def reads(json: JsValue): JsSuccess[TaxCodeChangeReasonType] = json.as[String] match {
-      case "ADDED" => JsSuccess(TaxCodeChangeReasonTypeAdded)
-      case "REMOVED" => JsSuccess(TaxCodeChangeReasonTypeRemoved)
-      case "ADJUSTED" => JsSuccess(TaxCodeChangeReasonTypeAdjusted)
-      case _ => throw new IllegalArgumentException("Invalid TaxCodeChangeReasonsType")
-    }
-
-    override def writes(taxCodeChangeReasonsType: TaxCodeChangeReasonType) = JsString(taxCodeChangeReasonsType.toString)
-  }
-}

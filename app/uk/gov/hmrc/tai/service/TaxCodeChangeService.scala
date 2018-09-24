@@ -20,11 +20,9 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import org.joda.time.LocalDate
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.partials.HeaderCarrierForPartials
 import uk.gov.hmrc.tai.connectors.TaxCodeChangeConnector
 import uk.gov.hmrc.tai.connectors.responses.{TaiResponse, TaiSuccessResponseWithPayload, TaiTaxAccountFailureResponse}
-import uk.gov.hmrc.tai.model.domain.{TaxCodeChange, TaxCodeChangeReason, TaxCodeChangeReasons}
-import uk.gov.hmrc.tai.util.{TaxCodeChangeReasonTypeAdded, TaxCodeChangeReasonTypeAdjusted, TaxCodeChangeReasonTypeRemoved}
+import uk.gov.hmrc.tai.model.domain._
 
 import scala.concurrent.Future
 
@@ -46,13 +44,13 @@ trait TaxCodeChangeService {
   }
 
   def taxCodeChangeReasons(nino: Nino)(implicit hc: HeaderCarrier): Future[TaxCodeChangeReasons] = {
-//    taxCodeChangeConnector.taxCodeChangeReasons(nino) map {
-//      case TaiSuccessResponseWithPayload(taxCodeChangeReasons: TaxCodeChangeReasons) => taxCodeChangeReasons
-//      case _ => throw new RuntimeException("Could not fetch tax code change reasons")
-//    }
-    val adjustedAllowance = TaxCodeChangeReason(TaxCodeChangeReasonTypeRemoved, "EMPLOYMENT", "Description")
-    val newEmployment = TaxCodeChangeReason(TaxCodeChangeReasonTypeAdded, "EMPLOYMENT", "Description")
-    Future.successful(TaxCodeChangeReasons(Seq(adjustedAllowance, newEmployment)))
+    taxCodeChangeConnector.taxCodeChangeReasons(nino) map {
+      case TaiSuccessResponseWithPayload(taxCodeChangeReasons: TaxCodeChangeReasons) => taxCodeChangeReasons
+      case _ => throw new RuntimeException("Could not fetch tax code change reasons")
+    }
+//    val adjustedAllowance = TaxCodeChangeReason(TaxCodeChangeReasonTypeRemoved, "EMPLOYMENT", "Description")
+//    val newEmployment = TaxCodeChangeReason(TaxCodeChangeReasonTypeAdded, "EMPLOYMENT", "Description")
+//    Future.successful(TaxCodeChangeReasons(Seq(adjustedAllowance, newEmployment)))
   }
 
   def latestTaxCodeChangeDate(nino: Nino)(implicit hc: HeaderCarrier): Future[LocalDate] = {

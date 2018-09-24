@@ -98,7 +98,7 @@
         @if(reasons.length == 1) {
             @taxCodeReasonsBreakdown(reasons.head)
         } else {
-            @taxCodeReasonsBreakdown("We changed this because:", Some(taxCodeReasonsList(reasons)))
+            @taxCodeReasonsBreakdown("TODO TRANSLATE We changed this because:", Some(taxCodeReasonsList(reasons)))
         }
     }
 }
@@ -119,10 +119,11 @@
             </span>
         </i>
 
-    <strong class="bold-small">
-        @title
-    </strong>
+        <strong class="bold-small">
+            @title
+        </strong>
     </div>
+
     <div>
         @body
     </div>

@@ -17,8 +17,7 @@
 package uk.gov.hmrc.tai.util.factory
 
 import play.api.libs.json.{JsArray, JsObject, Json}
-import uk.gov.hmrc.tai.model.domain.{TaxCodeChangeReason, TaxCodeChangeReasons}
-import uk.gov.hmrc.tai.util.{TaiConstants, TaxCodeChangeReasonTypeAdded, TaxCodeChangeReasonTypeAdjusted, TaxCodeChangeReasonTypeRemoved}
+import uk.gov.hmrc.tai.model.domain._
 
 object TaxCodeChangeReasonsFactory {
 
