@@ -16,7 +16,8 @@
 
 package uk.gov.hmrc.tai.auth
 
-import play.api.Play
+import play.api.Mode.Mode
+import play.api.{Configuration, Play}
 import uk.gov.hmrc.play.config.RunMode
 
 object ConfigProperties extends RunMode {
@@ -32,4 +33,8 @@ object ConfigProperties extends RunMode {
     .getOrElse(throw new IllegalStateException(s"Could not find configuration for govuk-tax.$env.activatePaperless"))
 
   val taxPlatformTaiRootUri: String = Play.configuration.getString(s"govuk-tax.$env.taxPlatformTaiRootUri").getOrElse("http://noConfigTaiRootUri")
+
+  override protected val mode: Mode = Play.current.mode
+
+  override protected val runModeConfiguration: Configuration = Play.current.configuration
 }

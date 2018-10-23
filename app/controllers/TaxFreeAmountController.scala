@@ -18,6 +18,8 @@ package controllers
 
 import controllers.audit.Auditable
 import controllers.auth.{TaiUser, WithAuthorisedForTaiLite}
+import play.api.Mode.Mode
+import play.api.{Configuration, Play}
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
 import play.api.mvc.{Action, AnyContent, Request}
@@ -74,6 +76,9 @@ object TaxFreeAmountController extends TaxFreeAmountController with Authenticati
   override implicit def templateRenderer = LocalTemplateRenderer
 
   override implicit def partialRetriever: FormPartialRetriever = TaiHtmlPartialRetriever
+  override protected val mode: Mode = Play.current.mode
+
+  override protected val runModeConfiguration: Configuration = Play.current.configuration
 }
 // $COVERAGE-ON$
 

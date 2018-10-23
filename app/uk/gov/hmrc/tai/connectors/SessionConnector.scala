@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.tai.connectors
 
+import play.api.Mode.Mode
+import play.api.{Configuration, Play}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.tai.config.TaiConfig
 
@@ -33,5 +35,9 @@ trait SessionConnector extends TaiUrls with TaiConfig {
 // $COVERAGE-OFF$
 object SessionConnector extends SessionConnector {
   override val httpHandler: HttpHandler = HttpHandler
+
+  override protected val mode: Mode = Play.current.mode
+
+  override protected val runModeConfiguration: Configuration = Play.current.configuration
 }
 // $COVERAGE-ON$

@@ -18,6 +18,8 @@ package controllers
 
 import controllers.audit.Auditable
 import controllers.auth.WithAuthorisedForTaiLite
+import play.api.Mode.Mode
+import play.api.{Configuration, Play}
 import play.api.Play.current
 import play.api.i18n.Messages
 import play.api.i18n.Messages.Implicits._
@@ -29,7 +31,7 @@ import uk.gov.hmrc.tai.config.{FeatureTogglesConfig, TaiHtmlPartialRetriever}
 import uk.gov.hmrc.tai.connectors.LocalTemplateRenderer
 import uk.gov.hmrc.tai.model.TaxYear
 import uk.gov.hmrc.tai.service.benefits.CompanyCarService
-import uk.gov.hmrc.tai.service.{CodingComponentService, EmploymentService, PersonService, TaxCodeChangeService, TaxAccountService}
+import uk.gov.hmrc.tai.service.{CodingComponentService, EmploymentService, PersonService, TaxAccountService, TaxCodeChangeService}
 import uk.gov.hmrc.tai.viewModels.taxCodeChange.{TaxCodeChangeViewModel, YourTaxFreeAmountViewModel}
 import uk.gov.hmrc.urls.Link
 
@@ -140,4 +142,7 @@ object TaxCodeChangeController extends TaxCodeChangeController with Authenticati
   override val employmentService: EmploymentService = EmploymentService
   override val companyCarService: CompanyCarService = CompanyCarService
   override val taxAccountService: TaxAccountService = TaxAccountService
+  override protected val mode: Mode = Play.current.mode
+
+  override protected val runModeConfiguration: Configuration = Play.current.configuration
 }

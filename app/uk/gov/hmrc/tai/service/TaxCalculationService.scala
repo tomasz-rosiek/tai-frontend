@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.tai.service
 
+import play.api.{Configuration, Play}
+import play.api.Mode.Mode
 import uk.gov.hmrc.tai.metrics.{GetTaxCalculationMetric, Metrics}
 import play.api.http.Status._
 import uk.gov.hmrc.domain.Nino
@@ -86,5 +88,9 @@ object TaxCalculationService extends TaxCalculationService {
   override val http = WSHttp
   override val metrics = Metrics
   override val taxCalcUrl: String = baseUrl("taxcalc")
+
+  override protected val mode: Mode = Play.current.mode
+
+  override protected val runModeConfiguration: Configuration = Play.current.configuration
 }
 // $COVERAGE-ON$

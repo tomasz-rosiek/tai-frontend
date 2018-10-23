@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.tai.connectors
 
+import play.api.Mode.Mode
+import play.api.{Configuration, Play}
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.renderer.TemplateRenderer
@@ -36,5 +38,9 @@ object LocalTemplateRenderer extends TemplateRenderer with ServicesConfig {
   override def fetchTemplate(path: String): Future[String] =  {
     WSHttp.GET(path).map(_.body)
   }
+
+  override protected val mode: Mode = Play.current.mode
+
+  override protected val runModeConfiguration: Configuration = Play.current.configuration
 }
 

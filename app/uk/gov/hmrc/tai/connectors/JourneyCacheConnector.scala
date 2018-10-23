@@ -16,12 +16,14 @@
 
 package uk.gov.hmrc.tai.connectors
 
+import play.api.Mode.Mode
+import play.api.{Configuration, Play}
 import uk.gov.hmrc.tai.connectors.responses.{TaiResponse, TaiSuccessResponse}
 import uk.gov.hmrc.play.config.ServicesConfig
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import uk.gov.hmrc.http.{ HeaderCarrier, NotFoundException }
+import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException}
 
 trait JourneyCacheConnector {
 
@@ -62,5 +64,9 @@ trait JourneyCacheConnector {
 object JourneyCacheConnector extends JourneyCacheConnector with ServicesConfig{
   override val serviceUrl = baseUrl("tai")
   val httpHandler: HttpHandler = HttpHandler
+
+  override protected val mode: Mode = Play.current.mode
+
+  override protected val runModeConfiguration: Configuration = Play.current.configuration
 }
 // $COVERAGE-ON$

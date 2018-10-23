@@ -19,7 +19,8 @@ package uk.gov.hmrc.tai.connectors
 import java.net.URLEncoder
 
 import controllers.routes
-import play.api.Logger
+import play.api.Mode.Mode
+import play.api.{Configuration, Logger, Play}
 import play.api.Play.current
 import play.api.http.Status._
 import play.api.i18n.Messages
@@ -65,6 +66,10 @@ object PreferencesFrontendConnector extends PreferencesFrontendConnector with Se
       }
     }
   }
+
+  override protected val mode: Mode = Play.current.mode
+
+  override protected val runModeConfiguration: Configuration = Play.current.configuration
 }
 
 trait PreferencesFrontendConnector extends HeaderCarrierForPartialsConverter {

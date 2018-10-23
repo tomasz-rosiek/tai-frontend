@@ -19,11 +19,12 @@ package uk.gov.hmrc.tai.config
 import com.typesafe.config.Config
 import controllers.routes
 import net.ceedubs.ficus.Ficus._
+import play.api.Mode.Mode
 import play.api.Play.current
 import play.api.i18n.Messages
 import play.api.i18n.Messages.Implicits._
 import play.api.mvc.Request
-import play.api.{Application, Play}
+import play.api.{Application, Configuration, Play}
 import play.twirl.api.Html
 import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.play.config.{AppName, ControllerConfig, RunMode}
@@ -80,6 +81,10 @@ object ApplicationGlobal extends DefaultFrontendGlobal with RunMode {
       value=Some(Messages("tai.errorMessage.startAgain"))
     ).toHtml)
   )
+
+  override protected val mode: Mode = Play.current.mode
+
+  override protected val runModeConfiguration: Configuration = Play.current.configuration
 }
 
 object ControllerConfiguration extends ControllerConfig {
@@ -93,4 +98,9 @@ object HelpFrontendAuditFilter extends FrontendAuditFilter with RunMode with App
   override lazy val applicationPort: Option[Int] = None
   override lazy val auditConnector = AuditConnector
   override def controllerNeedsAuditing(controllerName: String) = ControllerConfiguration.paramsForController(controllerName).needsAuditing
+  override protected val appNameConfiguration: Configuration = Play.current.configuration
+
+  override protected val mode: Mode = Play.current.mode
+
+  override protected val runModeConfiguration: Configuration = Play.current.configuration
 }

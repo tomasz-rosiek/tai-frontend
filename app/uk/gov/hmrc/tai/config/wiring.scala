@@ -16,6 +16,9 @@
 
 package uk.gov.hmrc.tai.config
 
+import play.api.Mode.Mode
+import play.api.{Configuration, Play}
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import uk.gov.hmrc.play.audit.http.HttpAuditing
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector => Auditing}
@@ -31,6 +34,12 @@ import uk.gov.hmrc.play.frontend.filters.SessionCookieCryptoFilter
 
 object AuditConnector extends Auditing with AppName with RunMode {
   override lazy val auditingConfig = LoadAuditingConfig(s"$env.auditing")
+
+  override protected val mode: Mode = Play.current.mode
+
+  override protected val runModeConfiguration: Configuration = Play.current.configuration
+
+  override protected val appNameConfiguration: Configuration = Play.current.configuration
 }
 
 trait Hooks extends HttpHooks with HttpAuditing {
@@ -44,7 +53,9 @@ trait WSHttp extends HttpGet with WSGet
   with HttpDelete with WSDelete
   with Hooks with AppName
 
-object WSHttp extends WSHttp
+object WSHttp extends WSHttp {
+  override protected val appNameConfiguration: Configuration = Play.current.configuration
+}
 
 trait WSHttpProxy extends WSHttp with WSProxy with RunMode with HttpAuditing with ServicesConfig
 
@@ -52,6 +63,11 @@ object WSHttpProxy extends WSHttpProxy {
   override lazy val appName = getString("appName")
   override lazy val wsProxyServer = WSProxyConfiguration(s"proxy")
   override lazy val auditConnector = AuditConnector
+  override protected val appNameConfiguration: Configuration = Play.current.configuration
+
+  override protected val mode: Mode = Play.current.mode
+
+  override protected val runModeConfiguration: Configuration = Play.current.configuration
 }
 
 object TaiHtmlPartialRetriever extends FormPartialRetriever {
@@ -62,9 +78,17 @@ object TaiHtmlPartialRetriever extends FormPartialRetriever {
 object FrontendAuthConnector extends AuthConnector with ServicesConfig {
   val serviceUrl = baseUrl("auth")
   lazy val http = WSHttp
+
+  override protected val mode: Mode = Play.current.mode
+
+  override protected val runModeConfiguration: Configuration = Play.current.configuration
 }
 
 object FrontEndDelegationConnector extends DelegationConnector with ServicesConfig {
   override protected def serviceUrl: String = baseUrl("delegation")
   override protected def http: WSHttp = WSHttp
+
+  override protected val mode: Mode = Play.current.mode
+
+  override protected val runModeConfiguration: Configuration = Play.current.configuration
 }

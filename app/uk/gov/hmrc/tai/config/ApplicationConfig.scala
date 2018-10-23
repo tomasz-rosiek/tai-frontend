@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.tai.config
 
+import play.api.Mode.Mode
+import play.api.{Configuration, Play}
 import play.api.Play._
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.tai.model.TaxYear
@@ -87,7 +89,11 @@ object ApplicationConfig extends ServicesConfig {
   }
 
   lazy val isTaiCy3Enabled = configuration.getBoolean("tai.cy3.enabled").getOrElse(false)
-  }
+
+  override protected val mode: Mode = Play.current.mode
+
+  override protected val runModeConfiguration: Configuration = Play.current.configuration
+}
 
 trait FeatureTogglesConfig extends ServicesConfig {
   val cyPlusOneEnabled = configuration.getBoolean("tai.cyPlusOne.enabled").getOrElse(false)
@@ -97,7 +103,11 @@ trait FeatureTogglesConfig extends ServicesConfig {
   val taxCodeChangeEnabled = configuration.getBoolean("tai.taxCodeChange.enabled").getOrElse(false)
 }
 
-object FeatureTogglesConfig extends FeatureTogglesConfig
+object FeatureTogglesConfig extends FeatureTogglesConfig {
+  override protected val mode: Mode = Play.current.mode
+
+  override protected val runModeConfiguration: Configuration = Play.current.configuration
+}
 
 trait TaiConfig extends ServicesConfig {
   lazy val baseURL: String = baseUrl("tai")

@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.tai.connectors
 
+import play.api.Mode.Mode
+import play.api.{Configuration, Play}
 import play.api.libs.json.Reads
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.{CoreDelete, CoreGet, CorePost, CorePut, _}
@@ -48,5 +50,9 @@ object TaiConnector extends TaiConnector with ServicesConfig {
 
   lazy val serviceUrl = baseUrl("tai")
   override def http = WSHttp
+
+  override protected val mode: Mode = Play.current.mode
+
+  override protected val runModeConfiguration: Configuration = Play.current.configuration
 }
 // $COVERAGE-ON$

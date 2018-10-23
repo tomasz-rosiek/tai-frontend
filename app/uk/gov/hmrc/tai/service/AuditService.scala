@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.tai.service
 
+import play.api.Play
 import play.api.mvc.{AnyContent, Request}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
@@ -129,7 +130,7 @@ trait AuditService {
 
 object AuditService extends AuditService {
 
-  override val appName: String = AppName.appName
+  override val appName: String = Play.current.configuration.underlying.getString("appName")
   override val auditConnector: AuditConnector = AuditConnector
   override val personService: PersonService = PersonService
 }

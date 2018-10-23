@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.tai.connectors
 
+import play.api.Mode.Mode
+import play.api.{Configuration, Play}
 import play.api.libs.json.Json
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
@@ -28,6 +30,10 @@ import uk.gov.hmrc.tai.model.Activity
 object ActivityLoggerConnector extends ActivityLoggerConnector with ServicesConfig {
   override lazy val activityLoggerBaseUrl = baseUrl("activity-logger")
   override lazy val http = WSHttp
+
+  override protected val mode: Mode = Play.current.mode
+
+  override protected val runModeConfiguration: Configuration = Play.current.configuration
 }
 
 trait ActivityLoggerConnector {

@@ -16,8 +16,9 @@
 
 package uk.gov.hmrc.tai.connectors
 
+import play.api.Mode.Mode
 import uk.gov.hmrc.tai.model.CloseAccountRequest
-import play.api.Logger
+import play.api.{Configuration, Logger, Play}
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
@@ -86,5 +87,9 @@ object BbsiConnector extends BbsiConnector with ServicesConfig {
 
   override def serviceUrl: String = baseUrl("tai")
   override def httpHandler: HttpHandler = HttpHandler
+
+  override protected val mode: Mode = Play.current.mode
+
+  override protected val runModeConfiguration: Configuration = Play.current.configuration
 }
 // $COVERAGE-ON$

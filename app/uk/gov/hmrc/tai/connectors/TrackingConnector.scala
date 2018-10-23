@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.tai.connectors
 
+import play.api.{Configuration, Play}
+import play.api.Mode.Mode
 import uk.gov.hmrc.tai.model.domain.tracking.TrackedForm
 import uk.gov.hmrc.tai.model.domain.tracking.formatter.TrackedFormFormatters
 import uk.gov.hmrc.play.config.ServicesConfig
@@ -43,5 +45,8 @@ object TrackingConnector extends TrackingConnector with ServicesConfig {
   override val serviceUrl = baseUrl("tracking")
   override def httpHandler: HttpHandler = HttpHandler
 
+  override protected val mode: Mode = Play.current.mode
+
+  override protected val runModeConfiguration: Configuration = Play.current.configuration
 }
 // $COVERAGE-ON$

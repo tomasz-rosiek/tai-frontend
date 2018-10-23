@@ -20,6 +20,8 @@ import uk.gov.hmrc.tai.connectors.LocalTemplateRenderer
 import uk.gov.hmrc.tai.connectors.responses.{TaiNoCompanyCarFoundResponse, TaiSuccessResponseWithPayload}
 import controllers.audit.Auditable
 import controllers.auth.WithAuthorisedForTaiLite
+import play.api.Mode.Mode
+import play.api.{Configuration, Play}
 import uk.gov.hmrc.tai.forms.UpdateOrRemoveCarForm
 import uk.gov.hmrc.tai.forms.benefits.DateForm
 import uk.gov.hmrc.tai.viewModels.benefit.{CompanyCarCheckAnswersViewModel, CompanyCarChoiceViewModel}
@@ -215,5 +217,8 @@ object CompanyCarController extends CompanyCarController with AuthenticationConn
   override val journeyCacheService : JourneyCacheService = JourneyCacheService(CompanyCar_JourneyKey)
   override implicit val templateRenderer: TemplateRenderer = LocalTemplateRenderer
   override implicit val partialRetriever: FormPartialRetriever = TaiHtmlPartialRetriever
+  override protected val mode: Mode = Play.current.mode
+
+  override protected val runModeConfiguration: Configuration = Play.current.configuration
 }
 // $COVERAGE-ON$

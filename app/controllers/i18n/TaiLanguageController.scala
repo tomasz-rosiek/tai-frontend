@@ -18,6 +18,8 @@ package controllers.i18n
 
 import controllers.auth.WithAuthorisedForTaiLite
 import controllers.{AuthenticationConnectors, ServiceCheckLite, TaiBaseController}
+import play.api.Mode.Mode
+import play.api.{Configuration, Play}
 import play.api.i18n.Lang
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.frontend.auth.DelegationAwareActions
@@ -75,6 +77,9 @@ object TaiLanguageController extends TaiLanguageController with AuthenticationCo
   override def personService: PersonService = PersonService
   override implicit def templateRenderer: TemplateRenderer = LocalTemplateRenderer
   override implicit def partialRetriever: FormPartialRetriever = TaiHtmlPartialRetriever
+  override protected val mode: Mode = Play.current.mode
+
+  override protected val runModeConfiguration: Configuration = Play.current.configuration
 }
 // $COVERAGE-ON$
 

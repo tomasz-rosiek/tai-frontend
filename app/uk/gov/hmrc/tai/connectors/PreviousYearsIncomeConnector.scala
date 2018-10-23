@@ -16,10 +16,13 @@
 
 package uk.gov.hmrc.tai.connectors
 
+import play.api.Mode.Mode
+import play.api.{Configuration, Play}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.tai.model.domain.IncorrectIncome
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -40,5 +43,9 @@ trait PreviousYearsIncomeConnector {
 object PreviousYearsIncomeConnector extends PreviousYearsIncomeConnector with ServicesConfig {
   override val serviceUrl = baseUrl("tai")
   override def httpHandler: HttpHandler = HttpHandler
+
+  override protected val mode: Mode = Play.current.mode
+
+  override protected val runModeConfiguration: Configuration = Play.current.configuration
 }
 // $COVERAGE-ON$
