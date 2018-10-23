@@ -27,6 +27,8 @@ import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.PlaySpec
+import play.api.Configuration
+import play.api.Mode.Mode
 import play.api.http.Status._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import uk.gov.hmrc.domain.Generator
@@ -196,5 +198,9 @@ class TaxCalculationServiceSpec extends PlaySpec with MockitoSugar with I18nSupp
     override val taxCalcUrl: String = taxCalculationUrl
 
     when(metrics.startTimer(any())).thenReturn(mock[Timer.Context])
+
+    override protected val mode: Mode = app.mode
+
+    override protected val runModeConfiguration: Configuration = app.configuration
   }
 }

@@ -26,6 +26,8 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.PlaySpec
+import play.api.Configuration
+import play.api.Mode.Mode
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, status, _}
@@ -586,6 +588,10 @@ class WhatDoYouWantToDoControllerSpec extends PlaySpec with FakeTaiPlayApplicati
     override val taxAccountService: TaxAccountService = mock[TaxAccountService]
     override val taxCodeChangeService: TaxCodeChangeService = mock[TaxCodeChangeService]
     override val tileViewEnabled: Boolean = isTileViewEnabled
+
+    override protected val mode: Mode = app.mode
+
+    override protected val runModeConfiguration: Configuration = app.configuration
 
     val ad: Future[Some[Authority]] = AuthBuilder.createFakeAuthData
     when(authConnector.currentAuthority(any(), any())).thenReturn(ad)

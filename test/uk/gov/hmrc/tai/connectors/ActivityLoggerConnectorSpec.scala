@@ -24,6 +24,8 @@ import org.mockito.Mockito._
 import org.mockito.Matchers._
 import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.PlaySpec
+import play.api.Configuration
+import play.api.Mode.Mode
 import play.api.libs.json.JsValue
 import play.api.test.Helpers._
 import uk.gov.hmrc.play.config.ServicesConfig
@@ -65,7 +67,15 @@ class ActivityLoggerConnectorSpec extends PlaySpec with MockitoSugar with FakeTa
   private class SUT extends ActivityLoggerConnector with ServicesConfig {
     override lazy val activityLoggerBaseUrl: String = baseUrl("activity-logger")
     override lazy val http: WSHttp = mock[WSHttp]
+
+    override protected val mode: Mode = app.mode
+
+    override protected val runModeConfiguration: Configuration = app.configuration
   }
+
+  override protected val mode: Mode = app.mode
+
+  override protected val runModeConfiguration: Configuration = app.configuration
 
   private val nino: Nino = new Generator().nextNino
 

@@ -23,6 +23,8 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.PlaySpec
+import play.api.Configuration
+import play.api.Mode.Mode
 import play.api.libs.json._
 import uk.gov.hmrc.domain.Generator
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, NotFoundException}
@@ -325,4 +327,8 @@ class BbsiConnectorSpec extends PlaySpec with MockitoSugar with FakeTaiPlayAppli
     override val serviceUrl: String = servUrl
     override val httpHandler: HttpHandler = mock[HttpHandler]
   }
+
+  override protected val mode: Mode = app.mode
+
+  override protected val runModeConfiguration: Configuration = app.configuration
 }

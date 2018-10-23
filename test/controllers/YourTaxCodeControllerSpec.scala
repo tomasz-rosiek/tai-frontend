@@ -23,6 +23,8 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.PlaySpec
+import play.api.Configuration
+import play.api.Mode.Mode
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.test.Helpers.{status, _}
 import uk.gov.hmrc.domain.Generator
@@ -91,6 +93,10 @@ class YourTaxCodeControllerSpec extends PlaySpec with FakeTaiPlayApplication wit
     override implicit val templateRenderer: TemplateRenderer = MockTemplateRenderer
     override implicit val partialRetriever: FormPartialRetriever = MockPartialRetriever
     override val taxAccountService: TaxAccountService = mock[TaxAccountService]
+
+    override protected val mode: Mode = app.mode
+
+    override protected val runModeConfiguration: Configuration = app.configuration
 
     when(authConnector.currentAuthority(any(), any())).thenReturn(Future.successful(Some(AuthBuilder.createFakeAuthority(nino.nino))))
     when(personService.personDetails(any())(any())).thenReturn(Future.successful(fakePerson(nino)))

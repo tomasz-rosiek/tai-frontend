@@ -23,6 +23,8 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.PlaySpec
+import play.api.Configuration
+import play.api.Mode.Mode
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.test.Helpers.{status, _}
 import uk.gov.hmrc.domain.Generator
@@ -91,6 +93,10 @@ class TaxFreeAmountControllerSpec extends PlaySpec with FakeTaiPlayApplication w
     override val codingComponentService: CodingComponentService = mock[CodingComponentService]
     override val employmentService: EmploymentService = mock[EmploymentService]
     override val companyCarService: CompanyCarService = mock[CompanyCarService]
+
+    override protected val mode: Mode = app.mode
+
+    override protected val runModeConfiguration: Configuration = app.configuration
 
     val ad = AuthBuilder.createFakeAuthData
     when(authConnector.currentAuthority(any(), any())).thenReturn(ad)

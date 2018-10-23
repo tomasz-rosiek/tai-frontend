@@ -23,6 +23,8 @@ import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.PlaySpec
+import play.api.Configuration
+import play.api.Mode.Mode
 import play.api.libs.json.{JsString, Json}
 import uk.gov.hmrc.domain.{Generator, Nino}
 import uk.gov.hmrc.tai.model.domain._
@@ -350,5 +352,9 @@ class EmploymentsConnectorSpec extends PlaySpec
     override val serviceUrl: String = servUrl
     override val httpHandler: HttpHandler = mock[HttpHandler]
   }
+
+  override protected val mode: Mode = app.mode
+
+  override protected val runModeConfiguration: Configuration = app.configuration
 
 }

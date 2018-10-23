@@ -98,9 +98,8 @@ object HelpFrontendAuditFilter extends FrontendAuditFilter with RunMode with App
   override lazy val applicationPort: Option[Int] = None
   override lazy val auditConnector = AuditConnector
   override def controllerNeedsAuditing(controllerName: String) = ControllerConfiguration.paramsForController(controllerName).needsAuditing
+
   override protected val appNameConfiguration: Configuration = Play.current.configuration
-
   override protected val mode: Mode = Play.current.mode
-
   override protected val runModeConfiguration: Configuration = Play.current.configuration
 }

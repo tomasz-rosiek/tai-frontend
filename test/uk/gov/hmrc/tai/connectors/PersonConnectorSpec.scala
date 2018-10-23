@@ -22,6 +22,8 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.PlaySpec
+import play.api.Configuration
+import play.api.Mode.Mode
 import play.api.libs.json.Json
 import uk.gov.hmrc.domain.Generator
 import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException}
@@ -77,5 +79,9 @@ class PersonConnectorSpec extends PlaySpec with MockitoSugar with FakeTaiPlayApp
     override val serviceUrl: String = servUrl
     override val httpHandler: HttpHandler = mock[HttpHandler]
   }
+
+  override protected val mode: Mode = app.mode
+
+  override protected val runModeConfiguration: Configuration = app.configuration
 
 }

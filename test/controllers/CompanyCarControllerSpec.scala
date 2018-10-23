@@ -25,6 +25,8 @@ import org.mockito.Mockito.when
 import org.mockito.{Matchers, Mockito}
 import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.PlaySpec
+import play.api.Configuration
+import play.api.Mode.Mode
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -393,6 +395,10 @@ class CompanyCarControllerSpec extends PlaySpec with MockitoSugar with FakeTaiPl
     override implicit val templateRenderer: TemplateRenderer = MockTemplateRenderer
     override implicit val partialRetriever: FormPartialRetriever = MockPartialRetriever
     override val companyCarForceRedirectEnabled: Boolean = isCompanyCarForceRedirectEnabled
+
+    override protected val mode: Mode = app.mode
+
+    override protected val runModeConfiguration: Configuration = app.configuration
 
     when(authConnector.currentAuthority(any(), any())).thenReturn(Future.successful(Some(fakeAuthority)))
     when(personService.personDetails(any())(any())).thenReturn(Future.successful(fakePerson(fakeNino)))

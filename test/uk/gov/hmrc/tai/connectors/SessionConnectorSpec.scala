@@ -22,6 +22,8 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.PlaySpec
+import play.api.Configuration
+import play.api.Mode.Mode
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import scala.concurrent.{Await, Future}
@@ -54,6 +56,10 @@ class SessionConnectorSpec extends PlaySpec with MockitoSugar with FakeTaiPlayAp
     override val httpHandler: HttpHandler = mock[HttpHandler]
     override lazy val baseURL: String = "localhost"
     when(httpHandler.deleteFromApi(any())(any(), any())).thenReturn(Future.successful(HttpResponse(200)))
+
+    override protected val mode: Mode = app.mode
+
+    override protected val runModeConfiguration: Configuration = app.configuration
   }
 
 }

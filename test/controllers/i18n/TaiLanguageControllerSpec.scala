@@ -23,6 +23,8 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.PlaySpec
+import play.api.Configuration
+import play.api.Mode.Mode
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.test.Helpers.{status, _}
 import uk.gov.hmrc.domain.Generator
@@ -101,6 +103,10 @@ class TaiLanguageControllerSpec extends PlaySpec with FakeTaiPlayApplication wit
     override val authConnector: AuthConnector = mock[AuthConnector]
     override val delegationConnector: DelegationConnector = mock[DelegationConnector]
     override val isWelshEnabled = welshEnabled
+
+    override protected val mode: Mode = app.mode
+
+    override protected val runModeConfiguration: Configuration = app.configuration
 
     val authority = AuthBuilder.createFakeAuthData
     when(authConnector.currentAuthority(any(), any())).thenReturn(authority)
